@@ -5,7 +5,7 @@ const clients = new Map()
 const config = {
     windowMs: 15 * 60 * 1000,
     max: 100,
-    whitelist: ['127.0.0.1'],
+    whitelist: [],
     banList: ['']
 }
 
