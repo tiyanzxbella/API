@@ -205,16 +205,15 @@ body {
 .servers-box {
     background: var(--yellow);
     border: var(--border);
-    padding: 1rem 1.5rem;
-    box-shadow: 6px 6px 0 var(--black);
+    padding: 0.8rem 1.2rem;
+    box-shadow: 4px 4px 0 var(--black);
     margin-bottom: 2rem;
     display: flex;
     flex-direction: row;
-    /* Force row on all screens */
     align-items: center;
-    flex-wrap: wrap;
-    /* Wrap if too small */
-    gap: 1rem;
+    flex-wrap: nowrap;
+    gap: 0.8rem;
+    overflow-x: auto;
 }
 
 .servers-box label {
@@ -237,10 +236,9 @@ body {
     font-weight: 900;
     font-size: 1rem;
     cursor: pointer;
-    box-shadow: 4px 4px 0 var(--black);
+    box-shadow: 3px 3px 0 var(--black);
     flex: 1;
-    min-width: 200px;
-    /* Ensure it stays readable */
+    min-width: 150px;
     max-width: 100%;
     color: var(--black);
     text-transform: uppercase;
