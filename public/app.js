@@ -321,6 +321,32 @@ async function execute(path, method, status, btn) {
 
     try {
         const res = await fetch(requestUrl, options);
+
+        // Extract Rate Limit Headers
+        const limit = res.headers.get('x-ratelimit-limit');
+        const remaining = res.headers.get('x-ratelimit-remaining');
+
+        if (limit && remaining) {
+            const rlBadge = document.getElementById('rate-limit-badge');
+            if (rlBadge) {
+                rlBadge.style.display = 'inline-block';
+                rlBadge.textContent = `RATE LIMIT: ${remaining}/${limit}`;
+
+                // Change color based on remaining
+                const percent = (remaining / limit) * 100;
+                if (percent <= 20) {
+                    rlBadge.style.background = 'var(--red)';
+                    rlBadge.style.color = 'var(--white)';
+                } else if (percent <= 50) {
+                    rlBadge.style.background = 'var(--orange)';
+                    rlBadge.style.color = 'var(--black)';
+                } else {
+                    rlBadge.style.background = 'var(--yellow)';
+                    rlBadge.style.color = 'var(--black)';
+                }
+            }
+        }
+
         let data;
         const contentType = res.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
