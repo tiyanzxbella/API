@@ -11,10 +11,27 @@
 | :--- | :--- |
 | **Ultrafast** | Powered by `Hono` + `Node.js` for low latency. |
 | **Neo-Swagger** | Custom-designed API Portal (Not your boring swagger). |
+| **Productivity** | Built-in Code Snippets (cURL, Fetch, Python). |
+| **Accessibility** | Bookmarking (Favorites) & Precise Deep Linking. |
 | **Fortified** | Built-in Rate Limiting, IP Whitelist & Ban System. |
 | **Cluster Mode** | Auto-scales to use all available CPU cores. |
 | **Type-Safe** | Full validation using `Zod` & `OpenAPI`. |
 | **Modular** | Clean architecture for easy scalability. |
+
+---
+
+## PORTAL FEATURES
+
+Our custom UI is designed for high-performance development workflows.
+
+| Feature | Functionality |
+| :--- | :--- |
+| **Favorites (⭐)** | Bookmarks endpoints with LocalStorage persistence. |
+| **Code Snippets** | Real-time generation for cURL, Fetch, and Python. |
+| **Spec Download** | One-click download of the `openapi.json` definition. |
+| **Accordion UX** | Auto-collapses other endpoints for focused debugging. |
+| **Deep Link v2** | Precision hash routing (e.g., `#/get/api/stats`). |
+| **Copy Feedback** | Instant "COPIED!" visual confirmation on all actions. |
 
 ---
 
