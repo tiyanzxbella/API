@@ -281,9 +281,9 @@ function renderTagGroup(tag, endpoints) {
                                 </div>
                             </div>
                             <div class="response-box" style="display: none;">
-                                <div class="res-header" style="display: flex; justify-content: space-between; align-items: center; padding-right: 5px;">
+                                <div class="res-header" style="display: flex; align-items: center; gap: 20px; padding: 3px 15px;">
                                     <span>JSON RESPONSE</span>
-                                    <span class="latency-badge" style="display: none; padding: 2px 10px; font-size: 0.75rem; border: 2px solid var(--black); box-shadow: 2px 2px 0 var(--black); font-weight: 900; text-transform: uppercase;">0ms</span>
+                                    <span class="latency-badge" style="display: none; padding: 2px 15px; font-size: 0.75rem; border: 2px solid var(--black); box-shadow: 2px 2px 0 var(--black); font-weight: 900; text-transform: uppercase;">0ms</span>
                                 </div>
                                 <div class="res-controls" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding-top: 10px;">
                                     <div class="filter-group" style="display: flex; gap: 5px; flex-wrap: wrap;">
