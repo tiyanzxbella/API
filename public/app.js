@@ -196,14 +196,14 @@ function renderEndpoints(paths) {
 
     for (const [tag, endpoints] of Object.entries(groups)) {
         html += `
-        <div class="tag-group-header" onclick="toggleCategory(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 1.2rem; font-weight: 800; background: var(--white); color: var(--black); padding: 15px 20px; margin-top: 1.5rem; margin-bottom: 1rem; border: 4px solid var(--black); box-shadow: 6px 6px 0px var(--black); text-transform: uppercase;">
+        <div class="tag-group-header" onclick="toggleCategory(this)">
             <span style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <span style="background: var(--magenta); color: #fff; padding: 4px 8px; font-size: 0.8rem; font-weight: 900; box-shadow: 2px 2px 0 var(--black); border: 2px solid var(--black);">TAG</span>
+                <span class="tag-label">TAG</span>
                 <span style="word-break: break-all;">${tag}</span>
             </span>
-            <span class="cat-arrow" style="transition: transform 0.3s; font-size: 1.5rem; transform: rotate(-90deg);">▼</span>
+            <span class="cat-arrow">▼</span>
         </div>
-        <div class="tag-group-content" style="display: none; padding-left: 1rem; border-left: 4px solid var(--magenta); margin-left: 1rem;">`;
+        <div class="tag-group-content">`;
 
         endpoints.forEach(({ path, method, details }) => {
             const methodClass = method.toLowerCase();
@@ -212,7 +212,7 @@ function renderEndpoints(paths) {
             const statusColor = getStatusColor(status);
 
             html += `
-                <div class="op-block" data-path="${path}" style="box-shadow: 4px 4px 0px var(--black);">
+                <div class="op-block" data-path="${path}">
                     <div class="op-sum" onclick="toggle(this)">
                         <span class="method ${methodClass}">${method}</span>
                         <span class="path">${path}</span>
@@ -222,24 +222,24 @@ function renderEndpoints(paths) {
                     </div>
                     <div class="op-content">
                         <div class="op-inner">
-                            <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
-                                <span class="badge rate-limit-status" style="background: var(--yellow); color: var(--black); font-size: 0.7rem; padding: 4px 8px;">RATE LIMIT: ...</span>
+                            <div class="rl-header">
+                                <span class="badge rate-limit-status">RATE LIMIT: ...</span>
                             </div>
                             <p class="op-desc">${details.description || 'No description provided.'}</p>
                             ${renderParams(details.parameters)}
                             ${hasBody ? `<textarea class="body-input" placeholder='{ "key": "value" }'>${getMethodExampleById(details.operationId)}</textarea>` : ''}
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <div class="op-btn-group">
                                 <button class="try-btn" onclick="execute('${path}', '${method}', '${status}', this)">Execute</button>
                                 <button class="try-btn" style="background: var(--blue); color: #fff; box-shadow: 4px 4px 0 var(--black);" onclick="shareApi('${path}', this)">Share API</button>
                             </div>
-                            <div class="response-box" style="position: relative;">
+                             <div class="response-box">
                                 <div class="res-header">JSON RESPONSE</div>
-                                <div class="filter-wrapper" style="margin-bottom: 10px; display: flex; gap: 5px;">
-                                    <input type="text" class="filter-input" placeholder="Filter path... (e.g. data.user.name)" style="flex: 1; background: var(--black); color: var(--yellow); border: 2px solid var(--black); padding: 5px 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; box-shadow: 2px 2px 0 var(--cyan);">
-                                    <button class="copy-btn" onclick="filterJsonResponse(this)" style="background: var(--yellow); color: var(--black); border: 2px solid var(--black); padding: 5px 10px; font-size: 0.8rem; font-weight: 800; cursor: pointer; box-shadow: 2px 2px 0 var(--magenta); text-transform: uppercase;">Filter</button>
+                                <div class="filter-wrapper">
+                                    <input type="text" class="filter-input" placeholder="Filter path... (e.g. data.user.name)">
+                                    <button class="copy-btn filter-btn" onclick="filterJsonResponse(this)">Filter</button>
                                 </div>
-                                <button class="copy-btn" onclick="copyResponse(this)" style="position: absolute; top: 10px; right: 10px; background: var(--cyan); color: var(--black); border: 2px solid var(--black); padding: 5px 10px; font-size: 0.8rem; font-weight: 800; cursor: pointer; box-shadow: 2px 2px 0 var(--magenta); text-transform: uppercase;">Copy</button>
-                                <a href="${path}" target="_blank" class="direct-link" style="word-break: break-all;">${method.toUpperCase()} ${path.toUpperCase()}</a>
+                                <button class="copy-btn main-copy-btn" onclick="copyResponse(this)">Copy</button>
+                                <a href="${path}" target="_blank" class="direct-link">${method.toUpperCase()} ${path.toUpperCase()}</a>
                                 <pre></pre>
                             </div>
                         </div>
