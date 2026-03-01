@@ -140,14 +140,6 @@ API/
 
 ---
 
----
-
-## LICENSE
-
-Proyek ini dilisensikan di bawah **MIT License**. Lihat file [LICENSE](LICENSE) untuk detail selengkapnya.
-
----
-
 <p align="center">
   <b>Built by YeMo Dev</b>
 </p>
