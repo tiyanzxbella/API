@@ -535,49 +535,231 @@ pre {
     min-height: 100px;
 }
 
-footer {
-    margin-top: 4rem;
-    padding: 3rem 1.5rem;
+/* --- FOOTER GENERATION 3: THE FINAL REFINEMENT --- */
+.footer-g3 {
+    width: 100%;
+    margin-top: 8rem;
     background: var(--black);
-    border: var(--border);
-    box-shadow: var(--shadow);
-    text-align: center;
-    color: #fff;
+    border-top: 10px solid var(--magenta);
+    position: relative;
+    color: var(--white);
+    overflow: hidden;
+}
+
+.footer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 6rem 2rem 3rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
+    gap: 6rem;
 }
 
-.footer-logo {
-    font-size: clamp(2rem, 8vw, 4rem);
+.g3-main-content {
+    display: grid;
+    grid-template-columns: 1.5fr 2fr;
+    gap: 4rem;
+    align-items: flex-start;
+}
+
+.g3-brand-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.g3-logo {
+    font-size: clamp(3rem, 8vw, 5rem);
     font-weight: 900;
     letter-spacing: -3px;
-    color: var(--magenta);
-}
-
-.footer-links {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    font-weight: 800;
+    line-height: 0.9;
+    color: var(--white);
     text-transform: uppercase;
-    font-size: 0.9rem;
+    position: relative;
+    cursor: pointer;
+    width: fit-content;
 }
 
-.footer-links a {
-    color: #fff;
-    text-decoration: none;
-    border-bottom: 3px solid var(--yellow);
+.g3-logo::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 10px;
+    background: var(--yellow);
+    transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.footer-copy {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 1px;
+.g3-logo:hover::after {
+    width: 120px;
+    background: var(--cyan);
+    box-shadow: 6px 6px 0 var(--magenta);
+}
+
+.g3-tagline {
+    font-size: 1.2rem;
+    max-width: 400px;
     color: #888;
+    font-weight: 500;
+    line-height: 1.5;
+    border-left: 5px solid var(--cyan);
+    padding-left: 1.5rem;
+}
+
+.g3-status-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #111;
+    padding: 10px 20px;
+    border: 3px solid #333;
+    font-size: 0.8rem;
+    font-weight: 800;
+    width: fit-content;
+    color: #666;
+    letter-spacing: 1px;
+}
+
+.g3-status-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--green);
+    animation: pulse 2s infinite;
+}
+
+.g3-status-text .highlight {
+    color: var(--green);
+}
+
+.g3-links-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 4rem;
+}
+
+.g3-nav-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.g3-nav-col h4 {
+    color: var(--yellow);
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+}
+
+.g3-nav-col a {
+    color: #BBB;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    transition: 0.2s;
+    width: fit-content;
+    border-bottom: 3px solid transparent;
+}
+
+.g3-nav-col a:hover {
+    color: var(--white);
+    border-bottom-color: var(--magenta);
+    padding-left: 8px;
+}
+
+.g3-bottom-strip {
+    border-top: 2px solid #222;
+    padding-top: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.g3-copyright {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #444;
+    letter-spacing: 1px;
+}
+
+.g3-legal {
+    display: flex;
+    gap: 3rem;
+}
+
+.g3-legal a {
+    color: #444;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 800;
+    transition: 0.2s;
+}
+
+.g3-legal a:hover {
+    color: var(--white);
+}
+
+/* --- G3 RESPONSIVE ENGINE --- */
+
+@media (max-width: 1100px) {
+    .g3-main-content {
+        grid-template-columns: 1fr;
+        gap: 5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-container {
+        padding: 4rem 1.5rem 2.5rem;
+        gap: 4rem;
+    }
+
+    .g3-main-content {
+        gap: 4rem;
+        text-align: left;
+    }
+
+    .g3-brand-section {
+        align-items: flex-start;
+    }
+
+    .g3-tagline {
+        font-size: 1.1rem;
+        padding-left: 1rem;
+    }
+
+    .g3-links-section {
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+    }
+
+    .g3-bottom-strip {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2rem;
+    }
+
+    .g3-legal {
+        gap: 2rem;
+    }
+
+    .g3-logo::after {
+        width: 40px;
+    }
+
+    .g3-logo:hover::after {
+        width: 80px;
+    }
+}
+
+@media (max-width: 400px) {
+    .g3-links-section {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
