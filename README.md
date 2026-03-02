@@ -143,7 +143,7 @@ Endpoints can now return raw binary data (images, videos, etc.) directly.
 
 - **Frontend Handling**: The API portal automatically detects binary `Content-Type` and renders a premium preview using `Blob` objects.
 - **UI Logic**: When binary data is displayed, JSON-specific controls (Filter/Copy) are automatically hidden for a cleaner experience.
-- **BA API Example**: `GET /api/ba` returns a direct image buffer.
+- **BA API Example**: `GET /api/ba` returns a standardized JSON response with image/video URL and type detection.
 
 ### Direct Link / Redirect
 

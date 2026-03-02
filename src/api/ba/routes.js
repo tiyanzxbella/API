@@ -1,23 +1,22 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import axios from 'axios'
-import mime from 'mime-types'
+import { MediaSchema } from '../../utils/media.js'
 
 export const blueArchiveRandomRoute = createRoute({
     method: 'get',
     path: '/api/ba',
     tags: ['random'],
-    description: 'Get a random Blue Archive media asset directly as a buffer',
+    description: 'Get a random Blue Archive media asset',
     'x-status': 'ONLINE',
-    'x-auto-media': false, // Bypassing JSON framework for direct binary response
+    'x-auto-media': true,
     responses: {
         200: {
             content: {
-                'image/jpeg': { schema: { type: 'string', format: 'binary' } },
-                'image/png': { schema: { type: 'string', format: 'binary' } },
-                'video/mp4': { schema: { type: 'string', format: 'binary' } },
-                'audio/mpeg': { schema: { type: 'string', format: 'binary' } }
+                'application/json': {
+                    schema: MediaSchema
+                }
             },
-            description: 'The raw media asset buffer',
+            description: 'Success',
         },
         500: {
             content: {
@@ -45,15 +44,7 @@ export const blueArchiveRandomHandler = async (c) => {
 
         const randomAsset = items[Math.floor(Math.random() * items.length)]
 
-        /* Fetch the actual binary data from the random asset URL */
-        const assetResponse = await axios.get(randomAsset, { responseType: 'arraybuffer' })
-        const buffer = assetResponse.data
-        const contentType = mime.lookup(randomAsset) || 'application/octet-stream'
-
-        return c.body(buffer, 200, {
-            'Content-Type': contentType,
-            'Cache-Control': 'no-cache'
-        })
+        return randomAsset
     } catch (error) {
         return c.json({
             error: 'Internal Server Error',
