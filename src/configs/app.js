@@ -11,8 +11,8 @@ export const appConfig = {
         email: 'miuudev@gmail.com'
     },
     license: {
-        name: 'MIT',
-        url: 'https://opensource.org/licenses/MIT'
+        name: 'MiuuAPI License',
+        url: 'https://github.com/miuubyte/API/blob/main/LICENSE'
     }
 }
 

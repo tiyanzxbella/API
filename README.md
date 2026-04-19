@@ -2,8 +2,6 @@
   <h1>MiuuAPI Infrastructure</h1>
   <p>A high-performance, modular API gateway and server infrastructure built for modern web services.</p>
 
-  <p><strong>Core Technology Stack:</strong></p>
-  <img src="https://skillicons.dev/icons?i=js,nodejs,hono,zod,npm,git,github,vscode,windows&theme=dark" />
 </div>
 
 <hr />

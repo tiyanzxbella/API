@@ -124,18 +124,28 @@ if (isCluster && cluster.isPrimary) {
                 preferredSecurityScheme: 'ApiKeyAuth'
             },
             customCss: `
-                .powered-by-scalar, .scalar-client-lib-title, .scalar-footer > a {
+                .powered-by-scalar, .scalar-footer > a {
                     display: none !important;
                 }
                 .scalar-footer::after {
-                    content: 'Powered by MiuuAPI';
+                    content: 'Powered by MiuuAPI Infrastructure';
                     display: block;
                     text-align: center;
                     font-size: 12px;
                     color: var(--scalar-color-3);
                     padding: 20px 0;
+                    cursor: pointer;
                 }
-                ${!isLocal ? '.sidebar-search, .scalar-header { display: none !important; }' : ''}
+                ${!isLocal ? `
+                    .sidebar-search, 
+                    .scalar-header, 
+                    .scalar-client-lib-title, 
+                    .scalar-client-lib-list, 
+                    .scalar-client-lib-select,
+                    .scalar-button-ghost[href*="github.com"] { 
+                        display: none !important; 
+                    }
+                ` : ''}
             `
         })(c)
     })
