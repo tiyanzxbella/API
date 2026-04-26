@@ -1,7 +1,20 @@
 {
     "name": "miuu-api",
     "version": "1.0.0",
-    "description": "About Simple and easy to use API. Star to support our work!",
+    "description": "MiuuAPI: A high-performance, modular API gateway and server infrastructure built for modern web services.",
+    "keywords": [
+        "hono",
+        "scalar",
+        "openapi",
+        "api-portal",
+        "clustering",
+        "high-performance",
+        "anime-api",
+        "media-api",
+        "rest-api",
+        "zod",
+        "node-server"
+    ],
     "license": "MIT",
     "repository": {
         "type": "git",
