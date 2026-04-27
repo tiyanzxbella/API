@@ -147,6 +147,9 @@ if (isCluster && cluster.isPrimary) {
             pageTitle: `${appConfig.title} - Documentation Portal`
         })
         const injectedHead = '<link rel="icon" type="image/png" href="/favicon.png"><link rel="shortcut icon" href="/favicon.ico"></head>';
+        c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        c.header('Pragma', 'no-cache');
+        c.header('Expires', '0');
         return c.html(html.replace('</head>', injectedHead).replace('</body>', `${buildBrandingScript()}</body>`))
     })
 
