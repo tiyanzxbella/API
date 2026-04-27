@@ -6,7 +6,7 @@ const KeyStatusResponseSchema = z.object({
     success: z.boolean().openapi({ example: true }),
     key: z.string().openapi({ example: 'your_api_key_here' }),
     type: z.string().openapi({ example: 'Premium' }),
-    limit: z.number().openapi({ example: 1000 }),
+    limit: z.union([z.number(), z.string()]).openapi({ example: 'Unlimited' }),
     description: z.string().openapi({ example: 'High performance API access' }),
     owner: z.string().openapi({ example: 'Miuu Support' })
 })
@@ -99,6 +99,7 @@ export const keyStatusHandler = (c) => {
     return c.json({
         success: true,
         key: apiKey,
-        ...keyInfo
+        ...keyInfo,
+        limit: keyInfo.limit === 0 ? 'Unlimited' : keyInfo.limit
     }, 200)
 }
