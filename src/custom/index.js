@@ -17,7 +17,7 @@ export function buildBrandingScript() {
   (function() {
     function patchScalar() {
       var styleEl = document.createElement('style');
-      styleEl.textContent = ${JSON.stringify(combinedCSS)} + ' .scalar-mcp-layer, .scalar-mcp-layer-link, [class*="scalar-mcp"], .mcp-logo, .mcp-nav { display: none !important; visibility: hidden !important; pointer-events: none !important; height: 0 !important; width: 0 !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important; position: absolute !important; } .m-discord-btn svg { width: 16px; height: 16px; margin-right: 6px; fill: currentColor; vertical-align: middle; }';
+      styleEl.textContent = ${JSON.stringify(combinedCSS)} + ' .scalar-mcp-layer, .scalar-mcp-layer-link, [class*="scalar-mcp"], .mcp-logo, .mcp-nav, .ask-agent-scalar-input-label, [data-v-78f5377c] { display: none !important; visibility: hidden !important; pointer-events: none !important; height: 0 !important; width: 0 !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important; position: absolute !important; } .m-discord-btn svg { width: 16px; height: 16px; margin-right: 6px; fill: currentColor; vertical-align: middle; }';
       document.head.appendChild(styleEl);
 
       var preloader = document.createElement('div');
@@ -43,13 +43,60 @@ export function buildBrandingScript() {
           setTimeout(function() { preloader.remove(); }, 300);
         }
       })
-      .add({ targets: '.m-path', strokeDashoffset: [anime.setDashoffset, 0], easing: 'linear', duration: 600, delay: anime.stagger(50) })
-      .add({ targets: '.m-path', fill: 'var(--scalar-color-accent)', duration: 200, easing: 'linear', offset: '-=200' })
-      .add({ targets: '.m-loader-text', opacity: [0, 1], translateY: [5, 0], duration: 300, easing: 'linear', offset: '-=150' });
+      .add({ 
+        targets: '.m-path', 
+        strokeDashoffset: [anime.setDashoffset, 0], 
+        easing: 'easeInOutQuart', 
+        duration: 1200, 
+        delay: anime.stagger(200) 
+      })
+      .add({ 
+        targets: '.m-path', 
+        fill: ['#ffffff00', 'var(--scalar-color-accent)'], 
+        duration: 600, 
+        easing: 'easeOutQuad', 
+        offset: '-=400' 
+      })
+      .add({ 
+        targets: '.m-loader-text', 
+        opacity: [0, 1], 
+        translateY: [20, 0], 
+        duration: 800, 
+        easing: 'easeOutExpo', 
+        offset: '-=400',
+        begin: function(anim) {
+          var textWrapper = document.querySelector('.m-loader-text');
+          textWrapper.innerHTML = textWrapper.textContent.replace(/\\\\S/g, "<span class='letter' style='display:inline-block'>$&</span>");
+          anime({
+            targets: '.m-loader-text .letter',
+            translateY: [40,0],
+            translateZ: 0,
+            opacity: [0,1],
+            easing: "easeOutExpo",
+            duration: 1200,
+            delay: (el, i) => 500 + 30 * i
+          });
+        }
+      });
 
       function customizeUI() {
-        var mcpLayers = document.querySelectorAll('.scalar-mcp-layer, .scalar-mcp-layer-link, .mcp-logo');
-        for (var i = 0; i < mcpLayers.length; i++) mcpLayers[i].remove();
+        var targets = document.querySelectorAll('.scalar-mcp-layer, .scalar-mcp-layer-link, .mcp-logo, .ask-agent-scalar-input-label, [data-v-78f5377c]');
+        for (var i = 0; i < targets.length; i++) targets[i].remove();
+
+        var buttons = document.querySelectorAll('button');
+        buttons.forEach(function(btn) {
+          var txt = btn.innerText || '';
+          if (txt.includes('Ask AI') || txt.includes('Deploy') || txt.includes('Share')) {
+            btn.style.setProperty('display', 'none', 'important');
+          }
+        });
+
+        var configTitles = document.querySelectorAll('.text-base.font-medium.text-c-1');
+        configTitles.forEach(function(el) {
+          if (el.innerText.includes('Scalar Configuration')) {
+            el.innerText = 'Configuration';
+          }
+        });
 
         var footerLink = document.querySelector('.scalar-footer-link, a[href*="scalar.com"]');
         if (footerLink) {
