@@ -15,7 +15,7 @@ import { setupRoutes } from './routes/index.js'
 import { logApiRequest } from './middlewares/accessLog.js'
 import { rateLimiter } from './middlewares/rateLimit.js'
 import { prettyPrint } from './middlewares/pretty.js'
-import { buildBrandingScript } from './utils/portalCustoms.js'
+import { buildBrandingScript } from './custom/index.js'
 
 const port = appConfig.port
 

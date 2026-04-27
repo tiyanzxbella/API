@@ -9,10 +9,6 @@ export const appConfig = {
         name: 'Miuu Support',
         url: 'https://github.com/miuubyte',
         email: 'miuudev@gmail.com'
-    },
-    license: {
-        name: 'Website License',
-        url: 'https://opensource.org/license/mit'
     }
 }
 
@@ -21,9 +17,16 @@ export const scalarConfig = {
         preferredSecurityScheme: 'ApiKeyAuth'
     },
     theme: 'none',
-    branding: {
-        name: 'MiuuPS',
-        url: 'https://github.com/miuubyte'
+    customBranding: {
+        footer: {
+            text: 'Powered by miuubyte',
+            url: 'https://github.com/miuubyte'
+        },
+        clientButton: {
+            text: 'Discord',
+            url: 'https://discord.gg/Gj8CUjCtav',
+            icon: 'discord'
+        }
     }
 }
 
@@ -33,8 +36,7 @@ export const openApiConfig = {
         version: appConfig.version,
         title: appConfig.title,
         description: appConfig.description,
-        contact: appConfig.contact,
-        license: appConfig.license
+        contact: appConfig.contact
     },
     servers: [],
     tags: [
