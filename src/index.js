@@ -146,11 +146,17 @@ if (isCluster && cluster.isPrimary) {
             config: { ...config, spec: { url: '/docs' } },
             pageTitle: `${appConfig.title} - Documentation Portal`
         })
-        const injectedHead = '<link rel="icon" type="image/png" href="/favicon.png"><link rel="shortcut icon" href="/favicon.ico"></head>';
+        const injectedHead = '<meta name="google" content="notranslate"><meta http-equiv="Content-Language" content="en"><link rel="icon" type="image/png" href="/favicon.png"><link rel="shortcut icon" href="/favicon.ico"></head>';
         c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         c.header('Pragma', 'no-cache');
         c.header('Expires', '0');
-        return c.html(html.replace('</head>', injectedHead).replace('</body>', `${buildBrandingScript()}</body>`))
+        c.header('Content-Language', 'en');
+        const fixedHtml = html
+            .replace('<html>', '<html lang="en" translate="no">')
+            .replace(/<html([^>]*)>/, '<html$1 lang="en" translate="no">')
+            .replace('</head>', injectedHead)
+            .replace('</body>', `${buildBrandingScript()}</body>`)
+        return c.html(fixedHtml)
     })
 
     app.notFound((c) => {
