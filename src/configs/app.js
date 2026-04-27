@@ -40,7 +40,6 @@ export const openApiConfig = {
     },
     servers: [],
     tags: [
-        { name: 'anime', description: 'Anime & Donghua information retrieval' },
         { name: 'server', description: 'Server health and statistics' },
         { name: 'auth', description: 'API Key management and authentication' }
     ]

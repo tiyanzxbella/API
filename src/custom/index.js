@@ -139,7 +139,7 @@ export function buildBrandingScript() {
           statusBtn.id = 'status-indicator-btn';
           statusBtn.className = 'cl-btn mr-2';
           statusBtn.innerHTML = '<div class="cl-btn-dot checking" id="status-dot"></div><span id="status-text">STATUS: Checking...</span>';
-          statusBtn.onclick = function() { window.dispatchEvent(new CustomEvent('open-changelog')); };
+          statusBtn.onclick = function() { if(window.openChangelog) window.openChangelog(); };
           emailBtn.parentNode.insertBefore(statusBtn, emailBtn);
 
           window.fetch('/api/stats').then(function(res) {
@@ -278,6 +278,7 @@ export function buildBrandingScript() {
 
 
       function initChangelogModal() {
+        if (document.getElementById('cl-overlay')) return;
         var cfg = ${JSON.stringify(changelogConfig)};
         if (!cfg.enabled) return;
 
@@ -300,11 +301,12 @@ export function buildBrandingScript() {
         }).join('<div class="cl-divider"></div>');
 
         var overlay = document.createElement('div');
+        overlay.id = 'cl-overlay';
         overlay.className = 'cl-modal-overlay';
         overlay.innerHTML = '<div class="cl-modal">' +
           '<div class="cl-modal-header">' +
             '<h3 class="cl-modal-title">' + cfg.title + '</h3>' +
-            '<button class="cl-close-btn" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
+            '<button class="cl-close-btn" id="cl-close" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>' +
           '</div>' +
           '<div class="cl-modal-body">' + entriesHTML + '</div>' +
         '</div>';
@@ -324,8 +326,9 @@ export function buildBrandingScript() {
             .add({ targets: overlay, opacity: [1, 0], duration: 200, complete: function() { overlay.style.pointerEvents = 'none'; } }, '-=150');
         }
 
-        overlay.querySelector('.cl-close-btn').addEventListener('click', closeModal);
-        window.addEventListener('open-changelog', openModal);
+        document.getElementById('cl-close').onclick = closeModal;
+        overlay.onclick = function(e) { if(e.target === overlay) closeModal(); };
+        window.openChangelog = openModal;
       }
 
       customizeUI();

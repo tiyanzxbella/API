@@ -42,7 +42,7 @@ export const changelogConfig = {
                 '[+] Toast notification for invalid API keys',
                 '[+] Custom branding and preloader animation',
                 '[*] MiuuAPI preloader improved with letter-by-letter animation',
-                '[-] Removed anime/media endpoints',
+                '[-] Removed legacy media endpoints',
             ]
         },
         {
