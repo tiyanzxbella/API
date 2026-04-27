@@ -207,26 +207,25 @@ export function buildBrandingScript() {
 
           async function updateRL() {
             try {
-              var res = await window.fetch('/api/auth/check?t=' + Date.now());
+              var res = await window.fetch('/api/auth/check?t=' + Date.now(), { method: 'HEAD' });
               var dot = document.getElementById('rl-dot');
-              if (res.ok) {
-                var remaining = res.headers.get('x-ratelimit-remaining');
-                var limit = res.headers.get('x-ratelimit-limit');
-                if (remaining !== null && limit !== null) {
-                   document.getElementById('m-rl-val').innerText = remaining;
-                   document.getElementById('m-rl-limit').innerText = limit;
-                   var remainingNum = parseInt(remaining, 10);
-                   var limitNum = parseInt(limit, 10);
-                   if (dot) {
-                     if (isNaN(remainingNum) || isNaN(limitNum)) {
-                         dot.className = 'cl-btn-dot up'; // Unlimited
-                     } else {
-                         var percentage = (remainingNum / limitNum) * 100;
-                         dot.className = 'cl-btn-dot ' + (percentage > 30 ? 'up' : (percentage > 0 ? 'warn' : 'down'));
-                     }
+              var remaining = res.headers.get('x-ratelimit-remaining');
+              var limit = res.headers.get('x-ratelimit-limit');
+              
+              if (remaining !== null && limit !== null) {
+                 document.getElementById('m-rl-val').innerText = remaining;
+                 document.getElementById('m-rl-limit').innerText = limit;
+                 var remainingNum = parseInt(remaining, 10);
+                 var limitNum = parseInt(limit, 10);
+                 if (dot) {
+                   if (isNaN(remainingNum) || isNaN(limitNum)) {
+                       dot.className = 'cl-btn-dot up'; // Unlimited
+                   } else {
+                       var percentage = (remainingNum / limitNum) * 100;
+                       dot.className = 'cl-btn-dot ' + (percentage > 30 ? 'up' : (percentage > 0 ? 'warn' : 'down'));
                    }
-                }
-              } else {
+                 }
+              } else if (!res.ok) {
                  if (dot) dot.className = 'cl-btn-dot down';
               }
             } catch(e) {
