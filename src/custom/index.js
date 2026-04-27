@@ -202,7 +202,7 @@ export function buildBrandingScript() {
           var rlWidget = document.createElement('div');
           rlWidget.id = 'm-rl-widget';
           rlWidget.className = 'm-rl-widget';
-          rlWidget.innerHTML = '<div class="cl-btn-dot checking" id="rl-dot"></div><span class="m-rl-label">Rate Limit:</span><span class="m-rl-val"><span id="m-rl-val">--</span>/100</span>';
+          rlWidget.innerHTML = '<div class="cl-btn-dot checking" id="rl-dot"></div><span class="m-rl-label">Rate Limit:</span><span class="m-rl-val" id="m-rl-val-container"><span id="m-rl-val">--</span>/<span id="m-rl-limit">--</span></span>';
           document.body.appendChild(rlWidget);
 
           async function updateRL() {
@@ -210,11 +210,20 @@ export function buildBrandingScript() {
               var res = await window.fetch('/api/auth/check?t=' + Date.now());
               var dot = document.getElementById('rl-dot');
               if (res.ok) {
-                var data = await res.json();
-                if (data && data.api) {
-                   document.getElementById('m-rl-val').innerText = data.api.remaining;
+                var remaining = res.headers.get('x-ratelimit-remaining');
+                var limit = res.headers.get('x-ratelimit-limit');
+                if (remaining !== null && limit !== null) {
+                   document.getElementById('m-rl-val').innerText = remaining;
+                   document.getElementById('m-rl-limit').innerText = limit;
+                   var remainingNum = parseInt(remaining, 10);
+                   var limitNum = parseInt(limit, 10);
                    if (dot) {
-                     dot.className = 'cl-btn-dot ' + (data.api.remaining > 30 ? 'up' : (data.api.remaining > 0 ? 'warn' : 'down'));
+                     if (isNaN(remainingNum) || isNaN(limitNum)) {
+                         dot.className = 'cl-btn-dot up'; // Unlimited
+                     } else {
+                         var percentage = (remainingNum / limitNum) * 100;
+                         dot.className = 'cl-btn-dot ' + (percentage > 30 ? 'up' : (percentage > 0 ? 'warn' : 'down'));
+                     }
                    }
                 }
               } else {
