@@ -1,4 +1,6 @@
 export const preloaderCSS = `
+  /* ── Preloader / Loading Screen ── */
+
   #m-preloader {
     position: fixed;
     top: 0;
@@ -22,6 +24,7 @@ export const preloaderCSS = `
     justify-content: center;
   }
 
+  /* Logo SVG */
   .m-svg {
     width: 100px;
     height: 100px;
@@ -34,6 +37,7 @@ export const preloaderCSS = `
     stroke-dashoffset: 12000;
   }
 
+  /* Brand Text */
   .m-loader-text {
     font-family: var(--scalar-font);
     font-weight: 700;
@@ -45,6 +49,7 @@ export const preloaderCSS = `
     transform: translateY(10px);
   }
 
+  /* Mobile responsive */
   @media (max-width: 600px) {
     .m-svg { width: 70px; height: 70px; }
     .m-loader-text { font-size: 18px; }
