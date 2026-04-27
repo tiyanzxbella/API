@@ -1,0 +1,49 @@
+﻿
+> miuu-api@1.0.0 dev
+> node --watch src/index.js
+
+[2m[16.09.36][0m [36mΓùÅ[0m [1mready[0m Worker 8716 is running on port 4000
+[RateLimit] NEW id=ip:127.0.0.1 method=HEAD count=0
+[2m[16.09.37][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m12.62ms[0m
+[2m[16.09.40][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m2.06ms[0m
+[2m[16.09.43][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m2.11ms[0m
+[2m[16.09.46][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.83ms[0m
+[RateLimit] INC id=ip:127.0.0.1 method=GET count=1 path=/api/stats
+[2m[16.09.46][0m [34mΓùÅ[0m [1mGET[0m [32m200[0m [90m/api/stats[0m [2m60.87ms[0m
+[2m[16.09.49][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.31ms[0m
+[2m[16.09.52][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.67ms[0m
+[2m[16.09.52][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.11ms[0m
+[2m[16.09.52][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.00ms[0m
+[2m[16.09.52][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.17ms[0m
+[2m[16.09.55][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.59ms[0m
+[2m[16.09.58][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.96ms[0m
+[RateLimit] INC id=ip:127.0.0.1 method=GET count=2 path=/api/auth/check
+[2m[16.09.59][0m [34mΓùÅ[0m [1mGET[0m [32m200[0m [90m/api/auth/check[0m [2m0.95ms[0m
+[RateLimit] INC id=ip:127.0.0.1 method=GET count=3 path=/api/auth/check
+[2m[16.09.59][0m [34mΓùÅ[0m [1mGET[0m [32m200[0m [90m/api/auth/check[0m [2m1.23ms[0m
+[2m[16.10.01][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.07ms[0m
+[2m[16.10.04][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.61ms[0m
+[2m[16.10.07][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m6.76ms[0m
+[2m[16.10.10][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.33ms[0m
+[2m[16.10.13][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.16ms[0m
+[2m[16.10.16][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m5.52ms[0m
+[2m[16.10.19][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.79ms[0m
+[2m[16.10.22][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.98ms[0m
+[2m[16.10.25][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.77ms[0m
+[2m[16.10.28][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.07ms[0m
+[2m[16.10.31][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.02ms[0m
+[2m[16.10.34][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.37ms[0m
+[2m[16.10.37][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.87ms[0m
+[2m[16.10.40][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.96ms[0m
+[2m[16.10.43][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.56ms[0m
+[2m[16.10.46][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.95ms[0m
+[2m[16.10.49][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.77ms[0m
+[2m[16.10.52][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.72ms[0m
+[2m[16.10.55][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.82ms[0m
+[2m[16.10.58][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.60ms[0m
+[2m[16.11.01][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.85ms[0m
+[2m[16.11.04][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m0.79ms[0m
+Restarting 'src/index.js'
+[2m[16.11.10][0m [36mΓùÅ[0m [1mready[0m Worker 5776 is running on port 4000
+[2m[16.11.10][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m10.43ms[0m
+[2m[16.11.13][0m [34mΓùÅ[0m [1mHEAD[0m [32m200[0m [90m/api/auth/check[0m [2m1.98ms[0m
