@@ -142,21 +142,25 @@ if (isCluster && cluster.isPrimary) {
 
     app.get('/', (c) => {
         const { branding, ...config } = scalarConfig
-        const html = renderApiReference({
+        let html = renderApiReference({
             config: { ...config, spec: { url: '/docs' } },
             pageTitle: `${appConfig.title} - Documentation Portal`
         })
-        const injectedHead = '<meta name="google" content="notranslate"><meta http-equiv="Content-Language" content="en"><link rel="icon" type="image/png" href="/favicon.png"><link rel="shortcut icon" href="/favicon.ico"></head>';
-        c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-        c.header('Pragma', 'no-cache');
-        c.header('Expires', '0');
-        c.header('Content-Language', 'en');
-        const fixedHtml = html
-            .replace('<html>', '<html lang="en" translate="no">')
-            .replace(/<html([^>]*)>/, '<html$1 lang="en" translate="no">')
-            .replace('</head>', injectedHead)
-            .replace('</body>', `${buildBrandingScript()}</body>`)
-        return c.html(fixedHtml)
+        // Set lang=en + translate=no on <html> tag (single regex, avoids duplication)
+        html = html.replace(/(<html)([^>]*)>/, '$1 lang="en" translate="no"$2>')
+        // Inject notranslate meta at VERY START of <head> (Chrome Android requires first-in-head)
+        html = html.replace('<head>', '<head><meta name="google" content="notranslate"><meta http-equiv="Content-Language" content="en"><meta name="language" content="English">')
+        // Favicon at end of head
+        html = html.replace('</head>', '<link rel="icon" type="image/png" href="/favicon.png"><link rel="shortcut icon" href="/favicon.ico"></head>')
+        // notranslate class on <body> - Chrome Android reads this
+        html = html.replace('<body>', '<body class="notranslate">')
+        // Branding scripts
+        html = html.replace('</body>', `${buildBrandingScript()}</body>`)
+        c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+        c.header('Pragma', 'no-cache')
+        c.header('Expires', '0')
+        c.header('Content-Language', 'en')
+        return c.html(html)
     })
 
     app.notFound((c) => {
