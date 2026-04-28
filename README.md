@@ -117,7 +117,7 @@ MiuuAPI features a sophisticated, self-service administrative panel that allows 
 
 ## Community and Support
 Join our community for updates and professional support:
-- **Discord**: https://discord.gg/miuubyte
+- **Discord**: https://discord.gg/Gj8CUjCtav
 - **GitHub**: https://github.com/miuubyte
 
 *Built by the MiuuAPI Community.*
