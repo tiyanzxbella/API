@@ -1,6 +1,10 @@
 import cluster from 'node:cluster'
+import fs from 'node:fs'
+import path from 'node:path'
 import { getConnInfo } from '@hono/node-server/conninfo'
-import { apiKeys, guestConfig, autoBanList, autoBanConfig, manualBans } from '../configs/apiKeys.js'
+import { apiKeys, guestConfig, autoBanConfig } from '../configs/apiKeys.js'
+
+import { banManager } from '../utils/banManager.js'
 
 const clients = new Map()
 const ipMonitor = new Map()
@@ -8,8 +12,7 @@ const ipMonitor = new Map()
 if (cluster.isWorker) {
     process.on('message', (msg) => {
         if (msg.type === 'BAN_LIST_SYNC') {
-            autoBanList.length = 0
-            autoBanList.push(...msg.data)
+            banManager.syncFromMaster(msg.data)
         }
     })
 }
@@ -48,7 +51,7 @@ export const rateLimiter = () => {
 
         const now = Date.now()
 
-        const manualBan = manualBans.find(b => b.ip === ip)
+        const manualBan = banManager.manualBans.find(b => b.ip === ip)
         if (manualBan) {
             return c.json({
                 success: false,
@@ -58,11 +61,11 @@ export const rateLimiter = () => {
             }, 403)
         }
 
-        const existingBanIndex = autoBanList.findIndex(b => b.ip === ip)
+        const existingBanIndex = banManager.autoBanList.findIndex(b => b.ip === ip)
         if (existingBanIndex !== -1) {
-            const ban = autoBanList[existingBanIndex]
+            const ban = banManager.autoBanList[existingBanIndex]
             if (ban.expires && now > ban.expires) {
-                autoBanList.splice(existingBanIndex, 1)
+                banManager.autoBanList.splice(existingBanIndex, 1)
             } else {
                 return c.json({
                     success: false,
@@ -80,16 +83,7 @@ export const rateLimiter = () => {
             } else {
                 monitor.count++
                 if (monitor.count > autoBanConfig.threshold) {
-                    const banData = { 
-                        ip, 
-                        reason: 'Auto-ban: DDoS Protection', 
-                        expires: now + autoBanConfig.banDuration 
-                    }
-                    if (cluster.isWorker) {
-                        process.send({ type: 'BAN_IP', data: banData })
-                    } else {
-                        autoBanList.push(banData)
-                    }
+                    banManager.banIP(ip, 'Auto-ban: DDoS Protection', autoBanConfig.banDuration)
                     return c.json({
                         success: false,
                         status: 403,
@@ -106,7 +100,7 @@ export const rateLimiter = () => {
         let id = apiKey && keyData ? `key:${apiKey}` : `ip:${ip}`
         const config = keyData ? { max: keyData.limit, windowMs: keyData.windowMs } : { max: guestConfig.limit, windowMs: guestConfig.windowMs }
 
-        if (c.req.path === '/' || c.req.path === '/docs') return await next()
+        if (c.req.path === '/' || c.req.path === '/docs' || c.req.path === '/api/admin/config') return await next()
         if (!c.req.path.startsWith('/api/')) return await next()
 
         if (config.max === 0) {

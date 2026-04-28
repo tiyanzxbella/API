@@ -1,4 +1,9 @@
 import { z } from '@hono/zod-openapi'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const appConfig = {
     port: process.env.PORT || 4000,
@@ -12,21 +17,28 @@ export const appConfig = {
     }
 }
 
-export const scalarConfig = {
-    authentication: {
-        preferredSecurityScheme: 'ApiKeyAuth'
-    },
-    theme: 'none',
-    customBranding: {
-        footer: {
-            text: 'Powered by miuubyte',
-            url: 'https://github.com/miuubyte'
-        },
-        clientButton: {
-            text: 'Discord',
-            url: 'https://discord.gg/Gj8CUjCtav',
-            icon: 'discord'
+/**
+ * Configuration for the Scalar Documentation UI
+ * Loaded dynamically from scalar.json
+ */
+export const getScalarConfig = () => {
+    try {
+        const configPath = path.join(__dirname, 'scalar.json')
+        if (fs.existsSync(configPath)) {
+            const data = fs.readFileSync(configPath, 'utf8')
+            const config = JSON.parse(data)
+            console.log(`[Config] Loaded scalar.json (Layout: ${config.layout}, Theme: ${config.theme})`)
+            return config
+        } else {
+            console.warn(`[Config] scalar.json not found at ${configPath}`)
         }
+    } catch (e) {
+        console.error(`[Config] Error loading scalar.json: ${e.message}`)
+    }
+    return {
+        theme: 'none',
+        layout: 'modern',
+        authentication: { preferredSecurityScheme: 'ApiKeyAuth' }
     }
 }
 
@@ -77,3 +89,15 @@ export const RateLimitSchema = z.object({
         max: z.number()
     })
 })
+
+export const saveScalarConfig = (newConfig) => {
+    try {
+        const __dirname = path.dirname(fileURLToPath(import.meta.url))
+        const configPath = path.join(__dirname, 'scalar.json')
+        fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 2))
+        return true
+    } catch (e) {
+        console.error(`[Config] Error saving scalar.json: ${e.message}`)
+        return false
+    }
+}

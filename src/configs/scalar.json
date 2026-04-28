@@ -1,0 +1,49 @@
+{
+  "layout": "modern",
+  "theme": "none",
+  "hideClientButton": false,
+  "showSidebar": true,
+  "showDeveloperTools": true,
+  "showToolbar": true,
+  "operationTitleSource": "summary",
+  "persistAuth": false,
+  "telemetry": true,
+  "externalUrls": {
+    "dashboardUrl": "https://dashboard.scalar.com",
+    "registryUrl": "https://registry.scalar.com",
+    "proxyUrl": "https://proxy.scalar.com",
+    "apiBaseUrl": "https://api.scalar.com"
+  },
+  "isEditable": false,
+  "isLoading": false,
+  "hideModels": false,
+  "documentDownloadType": "both",
+  "hideTestRequestButton": false,
+  "hideSearch": false,
+  "showOperationId": false,
+  "hideDarkModeToggle": false,
+  "withDefaultFonts": true,
+  "defaultOpenFirstTag": true,
+  "defaultOpenAllTags": false,
+  "expandAllModelSections": false,
+  "expandAllResponses": false,
+  "orderSchemaPropertiesBy": "alpha",
+  "orderRequiredPropertiesFirst": true,
+  "title": "API #1",
+  "slug": "api-1",
+  "authentication": {
+    "preferredSecurityScheme": "ApiKeyAuth"
+  },
+  "default": false,
+  "customBranding": {
+    "footer": {
+      "text": "Powered by miuubyte",
+      "url": "https://github.com/miuubyte"
+    },
+    "clientButton": {
+      "text": "Discord",
+      "url": "https://discord.gg/Gj8CUjCtav",
+      "icon": "discord"
+    }
+  }
+}

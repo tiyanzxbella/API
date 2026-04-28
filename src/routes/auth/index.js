@@ -7,8 +7,7 @@ import { guestConfig } from '../../configs/apiKeys.js'
 const KeyStatusResponseSchema = z.object({
     success: z.boolean().openapi({ example: true }),
     key: z.string().openapi({ example: 'your_api_key_here' }),
-    type: z.string().openapi({ example: 'Premium' }),
-    limit: z.union([z.number(), z.string()]).openapi({ example: 'Unlimited' }),
+    limit: z.union([z.number(), z.string()]).openapi({ example: 100 }),
     remaining: z.union([z.number(), z.string()]).openapi({ example: 95 }),
     description: z.string().openapi({ example: 'High performance API access' }),
     owner: z.string().openapi({ example: 'Miuu Support' })
@@ -99,12 +98,11 @@ export const keyStatusHandler = async (c) => {
 
         return c.json({
             success: true,
-            key: 'Guest',
-            type: 'Default',
+            key: 'GUEST_MODE',
             limit: guestConfig.limit,
             remaining: remaining,
             description: 'Default guest rate limit',
-            owner: 'Guest User'
+            owner: 'Public Guest'
         }, 200)
     }
 
@@ -125,8 +123,9 @@ export const keyStatusHandler = async (c) => {
     return c.json({
         success: true,
         key: apiKey,
-        ...keyInfo,
         limit: keyInfo.limit === 0 ? 'Unlimited' : keyInfo.limit,
-        remaining: remaining
+        remaining: remaining,
+        description: 'High performance API access',
+        owner: keyInfo.name || 'Miuu Support'
     }, 200)
 }

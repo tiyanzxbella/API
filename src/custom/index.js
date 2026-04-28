@@ -1,13 +1,12 @@
 import { preloaderCSS } from './styles/preloader.js'
 import { bannerCSS } from './styles/banner.js'
 import { adsCSS } from './styles/ads.js'
-import { scalarConfig } from '../configs/app.js'
 import { adsConfig } from '../configs/ads.js'
 const ICONS = {
   discord: '<svg viewBox="0 0 127.14 96.36"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.71,32.65-1.82,56.6.4,80.21a105.73,105.73,0,0,0,32.17,16.15,77.7,77.7,0,0,0,6.89-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c3.39-29,1.24-52.75-16.9-72.13ZM42.45,65.69C36.18,65.69,31,60,31,53s5.12-12.67,11.45-12.67S54,46,53.86,53,48.74,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5.12-12.67,11.44-12.67S96.14,46,96,53,90.89,65.69,84.69,65.69Z"/></svg>'
 }
 
-export function buildBrandingScript() {
+export function buildBrandingScript(scalarConfig) {
   const statusCSS = `
     .cl-btn { display: flex; align-items: center; gap: 8px; color: var(--scalar-color-1); font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--scalar-border-color); background: var(--scalar-background-2); cursor: default; }
     .cl-btn-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e; flex-shrink: 0; }
@@ -90,10 +89,46 @@ export function buildBrandingScript() {
 
     @keyframes m-pulse-scale {
       0% { transform: scale(0.95); filter: brightness(0.8); }
-      100% { transform: scale(1.1); filter: brightness(1.2) drop-shadow(0 0 8px #3db3ff); }
+      100% { transform: scale(1.1); filter: brightness(1.2) drop-shadow(0 0 12px var(--scalar-color-accent)); }
+    }
+    
+    .m-rl-val.unlimited {
+      font-size: 24px;
+      color: var(--scalar-color-accent);
+      font-weight: 900;
+      text-shadow: 0 0 15px var(--scalar-color-accent);
     }
   `;
-  const combinedCSS = preloaderCSS + bannerCSS + adsCSS + statusCSS;
+  const combinedCSS = preloaderCSS + bannerCSS + adsCSS + statusCSS + `
+    .miuu-toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000000;
+        background: var(--scalar-background-1);
+        border: 1px solid var(--scalar-border-color);
+        padding: 10px 20px;
+        border-radius: 10px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        color: var(--scalar-color-1);
+        font-family: sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .miuu-toast svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+  `;
   const { footer, clientButton } = scalarConfig.customBranding;
   const btnIcon = ICONS[clientButton.icon] || '';
 
@@ -102,6 +137,10 @@ export function buildBrandingScript() {
 <script type="text/javascript">
   (function() {
     function patchScalar() {
+      try {
+        localStorage.removeItem('scalar_authentication');
+      } catch(e) {}
+
       var styleEl = document.createElement('style');
       styleEl.textContent = ${JSON.stringify(combinedCSS)} + ' .scalar-mcp-layer, .scalar-mcp-layer-link, [class*="scalar-mcp"], .mcp-logo, .mcp-nav, .ask-agent-scalar-input-label, [data-v-78f5377c] { display: none !important; visibility: hidden !important; pointer-events: none !important; height: 0 !important; width: 0 !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important; position: absolute !important; } .m-discord-btn svg { width: 16px; height: 16px; margin-right: 6px; fill: currentColor; vertical-align: middle; }';
       document.head.appendChild(styleEl);
@@ -269,15 +308,32 @@ export function buildBrandingScript() {
 
             async function updateRL() {
               try {
-                var apiKey = localStorage.getItem('miuu_api_key') || '';
+                var apiKey = '';
+                
+                var inputs = document.querySelectorAll('input');
+                for(var i=0; i<inputs.length; i++) {
+                  var p = inputs[i].placeholder || '';
+                  var val = inputs[i].value || '';
+                  if (p.includes('api-key') || p.includes('api key') || p.includes('QUxMIFlPVVIgQkFTRSBBUkUgQkVMT05HIFRPIFVT') || inputs[i].classList.contains('scalar-password-input')) {
+                    if (val && val.length >= 3) {
+                      apiKey = val;
+                      break;
+                    }
+                  }
+                }
+
                 var url = '/api/auth/check?t=' + Date.now();
                 var headers = { 'Accept': 'application/json' };
                 if (apiKey) {
                   headers['x-api-key'] = apiKey;
-                  url += '&apikey=' + apiKey;
                 }
 
                 var res = await window.fetch(url, { method: 'HEAD', headers: headers });
+                
+                if (res.status === 401) {
+                  apiKey = '';
+                }
+
                 var remaining = res.headers.get('x-ratelimit-remaining');
                 var limit = res.headers.get('x-ratelimit-limit');
                 
@@ -285,15 +341,42 @@ export function buildBrandingScript() {
                 var dot = document.getElementById('rl-dot');
 
                 if (container && remaining !== null && limit !== null) {
-                  if (limit === 'UNLIMITED' || limit === 'Unlimited' || limit === '0') {
-                    container.innerHTML = '<span id="m-rl-val" class="m-rl-val unlimited">∞</span>';
-                    container.classList.add('unlimited-box');
-                    if (dot) dot.className = 'cl-btn-dot up';
+                  var isUnlimited = (limit === 'UNLIMITED' || limit === 'Unlimited' || limit === '0');
+                  
+                  if (isUnlimited) {
+                    if (!container.classList.contains('unlimited-box')) {
+                      container.innerHTML = '<span id="m-rl-val" class="m-rl-val unlimited">∞</span>';
+                      container.classList.add('unlimited-box');
+                      if (dot) dot.className = 'cl-btn-dot up';
+                      
+                      anime({
+                        targets: '.m-rl-val.unlimited',
+                        scale: [0.5, 1],
+                        opacity: [0, 1],
+                        rotate: '1turn',
+                        duration: 1000,
+                        easing: 'easeOutElastic(1, .5)'
+                      });
+                    }
                   } else {
                     container.classList.remove('unlimited-box');
+                    if (container.querySelector('.unlimited')) {
+                      container.innerHTML = '<span id="m-rl-val" class="m-rl-val">--</span><span class="m-rl-sep">/</span><span id="m-rl-limit" class="m-rl-val">--</span>';
+                    }
+                    
                     var curValEl = document.getElementById('m-rl-val');
                     var curLimitEl = document.getElementById('m-rl-limit');
-                    if (curValEl) curValEl.innerText = remaining;
+                    
+                    if (curValEl && curValEl.innerText !== remaining) {
+                      curValEl.innerText = remaining;
+                      anime({
+                        targets: curValEl,
+                        translateY: [-10, 0],
+                        opacity: [0, 1],
+                        duration: 500,
+                        easing: 'easeOutExpo'
+                      });
+                    }
                     if (curLimitEl) curLimitEl.innerText = limit;
                     
                     var remainingNum = parseInt(remaining, 10);
@@ -306,8 +389,18 @@ export function buildBrandingScript() {
                 }
               } catch(e) {}
             }
-            setInterval(updateRL, 5000);
+            setInterval(updateRL, 3000);
             updateRL();
+
+            rlWidget.addEventListener('click', function() {
+              anime({
+                targets: rlWidget,
+                scale: [1, 0.9, 1],
+                duration: 300,
+                easing: 'easeInOutQuad'
+              });
+              updateRL();
+            });
           }
         } finally {
           isProcessing = false;
@@ -366,6 +459,151 @@ export function buildBrandingScript() {
           anime({ targets: '.sponsor-modal', scale: [0.85, 1], translateY: [40, 0], opacity: [0, 1], duration: 700, easing: 'easeOutElastic(1, 0.7)' });
           anime({ targets: '.sponsor-card', translateY: [24, 0], opacity: [0, 1], duration: 500, delay: anime.stagger(120, { start: 250 }), easing: 'easeOutExpo' });
         }, cfg.delayMs);
+      }
+      // Localhost/VPS IP/Local Network Admin Save Logic
+      const isIP = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(window.location.hostname);
+      const isLocal = isIP || 
+                      ['localhost', '127.0.0.1'].includes(window.location.hostname) || 
+                      window.location.hostname.endsWith('.local');
+                      
+      if (isLocal) {
+          // Force visibility of Scalar's native Configure button on Desktop IPs only
+          const forceTools = document.createElement('style');
+          forceTools.textContent = \`
+            [id^="headlessui-popover-button-scalar-refs"], 
+            .scalar-developer-tools { 
+              display: flex !important; 
+              visibility: visible !important; 
+            }
+            @media (max-width: 768px) {
+              [id^="headlessui-popover-button-scalar-refs"],
+              .scalar-developer-tools {
+                display: none !important;
+                visibility: hidden !important;
+              }
+            }
+          \`;
+          document.head.appendChild(forceTools);
+
+          var scData = ${JSON.stringify(scalarConfig)};
+          
+          const showMiuuNotification = (msg, isSuccess) => {
+              const toast = document.createElement('div');
+              toast.className = 'miuu-toast';
+              
+              const icon = isSuccess 
+                  ? \`<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>\`
+                  : \`<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>\`;
+              
+              toast.innerHTML = icon + '<span>' + msg + '</span>';
+              document.body.appendChild(toast);
+              
+              anime({
+                  targets: toast,
+                  bottom: [0, 30],
+                  opacity: [0, 1],
+                  duration: 600,
+                  easing: 'easeOutExpo'
+              });
+              
+              setTimeout(() => {
+                  anime({
+                      targets: toast,
+                      opacity: 0,
+                      bottom: 50,
+                      duration: 400,
+                      easing: 'easeInExpo',
+                      complete: () => toast.remove()
+                  });
+              }, 3000);
+          };
+
+          const injectSaveButton = (panel) => {
+              if (panel.querySelector('#miuu-save-btn')) return;
+              
+              const saveBtn = document.createElement('button');
+              saveBtn.id = 'miuu-save-btn';
+              saveBtn.innerHTML = 'Save to scalar.json';
+              saveBtn.className = 'bg-b-3 text-c-1 hover:bg-b-2 flex items-center justify-center rounded px-4 py-2.5 text-xs font-bold uppercase tracking-wider mb-6 w-full border border-c-3 transition-all duration-200 active:scale-95 shadow-sm';
+              
+              saveBtn.onclick = async () => {
+                  saveBtn.disabled = true;
+                  const originalText = saveBtn.innerHTML;
+                  saveBtn.innerHTML = 'SAVING...';
+                  
+                  anime({
+                      targets: saveBtn,
+                      scale: [1, 0.95, 1],
+                      duration: 300,
+                      easing: 'easeInOutQuad'
+                  });
+                  
+                  const jsonEl = panel.querySelector('pre') || panel.querySelector('code');
+                  if (!jsonEl) {
+                      showMiuuNotification('Configuration not found', false);
+                      saveBtn.disabled = false;
+                      saveBtn.innerHTML = originalText;
+                      return;
+                  }
+                  
+                  try {
+                      const configObj = JSON.parse(jsonEl.innerText.trim());
+                      const finalConfig = {
+                          ...configObj,
+                          customBranding: {
+                              ...scData.customBranding,
+                              ...(configObj.customBranding || {})
+                          }
+                      };
+                      
+                      const res = await fetch('/api/admin/config', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(finalConfig)
+                      });
+                      
+                      if (res.ok) {
+                          showMiuuNotification('Configuration saved successfully', true);
+                          anime({
+                              targets: saveBtn,
+                              backgroundColor: ['var(--scalar-background-3)', '#22c55e', 'var(--scalar-background-3)'],
+                              duration: 1000,
+                              easing: 'easeInOutQuad'
+                          });
+                          setTimeout(() => {
+                              saveBtn.disabled = false;
+                              saveBtn.innerHTML = originalText;
+                          }, 1000);
+                      } else {
+                          throw new Error('Server error');
+                      }
+                  } catch (e) {
+                      showMiuuNotification('Failed to save: ' + e.message, false);
+                      saveBtn.disabled = false;
+                      saveBtn.innerHTML = originalText;
+                  }
+              };
+              
+              panel.prepend(saveBtn);
+          };
+
+          const observer = new MutationObserver(() => {
+              const panel = document.querySelector('[id^="headlessui-popover-panel"]');
+              if (panel) injectSaveButton(panel);
+          });
+          
+          observer.observe(document.body, { childList: true, subtree: true });
+      } else {
+          // Hide Scalar's native Configure button on public domains
+          const hideTools = document.createElement('style');
+          hideTools.textContent = \`
+            [id^="headlessui-popover-button-scalar-refs"], 
+            .scalar-developer-tools { 
+              display: none !important; 
+              visibility: hidden !important; 
+            }
+          \`;
+          document.head.appendChild(hideTools);
       }
 
       customizeUI();
