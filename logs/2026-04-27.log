@@ -1,0 +1,4 @@
+[2026-04-28T01:10:39.680Z] [INFO] GET 200 / {"ip":"unknown","apiKey":"Guest","duration":"3.67ms"}
+[2026-04-28T01:10:40.116Z] [INFO] GET 200 /docs {"ip":"unknown","apiKey":"Guest","duration":"40.77ms"}
+[2026-04-28T01:10:40.359Z] [INFO] GET 200 /favicon.png {"ip":"unknown","apiKey":"Guest","duration":"6.09ms"}
+[2026-04-28T01:10:40.591Z] [INFO] GET 200 /assets/banner.jpg {"ip":"unknown","apiKey":"Guest","duration":"1.93ms"}
