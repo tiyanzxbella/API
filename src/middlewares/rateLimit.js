@@ -4,17 +4,7 @@ import path from 'node:path'
 import { getConnInfo } from '@hono/node-server/conninfo'
 import { apiKeys, guestConfig, autoBanConfig } from '../configs/apiKeys.js'
 
-const bansPath = path.resolve('src/configs/bans.json')
-let autoBanList = []
-let manualBans = []
-
-try {
-    if (fs.existsSync(bansPath)) {
-        const data = JSON.parse(fs.readFileSync(bansPath, 'utf8'))
-        autoBanList = data.autoBanList || []
-        manualBans = data.manualBans || []
-    }
-} catch (e) {}
+import { banManager } from '../utils/banManager.js'
 
 const clients = new Map()
 const ipMonitor = new Map()
@@ -22,8 +12,7 @@ const ipMonitor = new Map()
 if (cluster.isWorker) {
     process.on('message', (msg) => {
         if (msg.type === 'BAN_LIST_SYNC') {
-            autoBanList = msg.data.autoBanList || []
-            manualBans = msg.data.manualBans || []
+            banManager.syncFromMaster(msg.data)
         }
     })
 }
@@ -62,7 +51,7 @@ export const rateLimiter = () => {
 
         const now = Date.now()
 
-        const manualBan = manualBans.find(b => b.ip === ip)
+        const manualBan = banManager.manualBans.find(b => b.ip === ip)
         if (manualBan) {
             return c.json({
                 success: false,
@@ -72,11 +61,11 @@ export const rateLimiter = () => {
             }, 403)
         }
 
-        const existingBanIndex = autoBanList.findIndex(b => b.ip === ip)
+        const existingBanIndex = banManager.autoBanList.findIndex(b => b.ip === ip)
         if (existingBanIndex !== -1) {
-            const ban = autoBanList[existingBanIndex]
+            const ban = banManager.autoBanList[existingBanIndex]
             if (ban.expires && now > ban.expires) {
-                autoBanList.splice(existingBanIndex, 1)
+                banManager.autoBanList.splice(existingBanIndex, 1)
             } else {
                 return c.json({
                     success: false,
@@ -94,16 +83,7 @@ export const rateLimiter = () => {
             } else {
                 monitor.count++
                 if (monitor.count > autoBanConfig.threshold) {
-                    const banData = { 
-                        ip, 
-                        reason: 'Auto-ban: DDoS Protection', 
-                        expires: now + autoBanConfig.banDuration 
-                    }
-                    if (cluster.isWorker) {
-                        process.send({ type: 'BAN_IP', data: banData })
-                    } else {
-                        autoBanList.push(banData)
-                    }
+                    banManager.banIP(ip, 'Auto-ban: DDoS Protection', autoBanConfig.banDuration)
                     return c.json({
                         success: false,
                         status: 403,

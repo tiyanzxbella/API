@@ -44,6 +44,8 @@ const killPort = () => {
     } catch (e) { }
 }
 
+import { banManager } from './utils/banManager.js'
+
 const numCPUs = os.cpus().length
 const isCluster = process.argv.includes('--cluster')
 
@@ -56,39 +58,6 @@ if (isCluster && cluster.isPrimary) {
     logger.info(`Starting ${numCPUs} workers...`)
 
     const masterClients = new Map()
-    const bansPath = path.resolve('src/configs/bans.json')
-    let banData = { autoBanList: [], manualBans: [] }
-    try {
-        if (fs.existsSync(bansPath)) {
-            banData = JSON.parse(fs.readFileSync(bansPath, 'utf8'))
-        }
-    } catch (e) {
-        logger.error(`Failed to load bans.json: ${e.message}`)
-    }
-
-    const masterAutoBanList = banData.autoBanList || []
-    const masterManualBans = banData.manualBans || []
-
-    const syncBansToFile = () => {
-        try {
-            fs.writeFileSync(bansPath, JSON.stringify({
-                autoBanList: masterAutoBanList,
-                manualBans: masterManualBans
-            }, null, 4), 'utf8')
-        } catch (e) {
-            logger.error(`Failed to sync bans to file: ${e.message}`)
-        }
-    }
-
-    const broadcastBanList = () => {
-        Object.values(cluster.workers).forEach(w => {
-            if (w) w.send({ 
-                type: 'BAN_LIST_SYNC', 
-                data: { autoBanList: masterAutoBanList, manualBans: masterManualBans } 
-            })
-        })
-        syncBansToFile()
-    }
 
     for (let i = 0; i < numCPUs; i++) {
         const worker = cluster.fork()
@@ -122,32 +91,18 @@ if (isCluster && cluster.isPrimary) {
                 })
             } else if (msg.type === 'BAN_IP') {
                 const { ip, reason, expires } = msg.data
-                if (!masterAutoBanList.find(b => b.ip === ip)) {
-                    masterAutoBanList.push({ ip, reason, expires })
-                    broadcastBanList()
-                }
+                const duration = expires - Date.now()
+                banManager.banIP(ip, reason, duration)
             }
         })
     }
 
     setInterval(() => {
         const now = Date.now()
-        let changed = false
-
         for (const [id, data] of masterClients.entries()) {
             if (now > data.resetTime) masterClients.delete(id)
         }
-        
-        for (let i = masterAutoBanList.length - 1; i >= 0; i--) {
-            if (now > masterAutoBanList[i].expires) {
-                masterAutoBanList.splice(i, 1)
-                changed = true
-            }
-        }
-
-        if (changed) {
-            broadcastBanList()
-        }
+        banManager.cleanup()
     }, 30 * 1000)
 
     cluster.on('exit', (worker) => {
