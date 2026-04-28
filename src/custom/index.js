@@ -73,38 +73,24 @@ export function buildBrandingScript() {
     }
     
     .m-rl-val.unlimited {
-      font-size: 20px;
-      background: linear-gradient(90deg, #3db3ff, #ff00ff, #ff6b00, #3db3ff);
-      background-size: 300% 100%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: m-rainbow-text 3s linear infinite, m-pulse-scale 2s ease-in-out infinite alternate;
+      font-size: 26px;
+      color: #3db3ff;
+      text-shadow: 0 0 15px rgba(61, 179, 255, 0.6);
+      animation: m-pulse-scale 2s ease-in-out infinite alternate;
       font-weight: 900;
-      filter: drop-shadow(0 0 5px rgba(61, 179, 255, 0.5));
+      line-height: 1;
+      display: inline-block;
     }
 
     .m-rl-val-box.unlimited-box {
-      border: 1px solid transparent;
-      background: linear-gradient(var(--scalar-background-2), var(--scalar-background-2)) padding-box,
-                  linear-gradient(90deg, #3db3ff, #ff00ff, #ff6b00, #3db3ff) border-box;
-      background-size: 300% 100%;
-      animation: m-rainbow-border 3s linear infinite;
-      box-shadow: 0 0 15px color-mix(in srgb, var(--scalar-color-accent) 20%, transparent);
-    }
-
-    @keyframes m-rainbow-text {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
-    }
-
-    @keyframes m-rainbow-border {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
+      border: 1px solid #3db3ff;
+      background: var(--scalar-background-2);
+      box-shadow: 0 0 20px rgba(61, 179, 255, 0.2);
     }
 
     @keyframes m-pulse-scale {
-      0% { transform: scale(0.9); }
-      100% { transform: scale(1.1); }
+      0% { transform: scale(0.95); filter: brightness(0.8); }
+      100% { transform: scale(1.1); filter: brightness(1.2) drop-shadow(0 0 8px #3db3ff); }
     }
   `;
   const combinedCSS = preloaderCSS + bannerCSS + adsCSS + statusCSS;
