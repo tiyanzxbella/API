@@ -99,7 +99,36 @@ export function buildBrandingScript(scalarConfig) {
       text-shadow: 0 0 15px var(--scalar-color-accent);
     }
   `;
-  const combinedCSS = preloaderCSS + bannerCSS + adsCSS + statusCSS;
+  const combinedCSS = preloaderCSS + bannerCSS + adsCSS + statusCSS + `
+    .miuu-toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000000;
+        background: var(--scalar-background-1);
+        border: 1px solid var(--scalar-border-color);
+        padding: 10px 20px;
+        border-radius: 10px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        color: var(--scalar-color-1);
+        font-family: sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .miuu-toast svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+  `;
   const { footer, clientButton } = scalarConfig.customBranding;
   const btnIcon = ICONS[clientButton.icon] || '';
 
@@ -431,6 +460,152 @@ export function buildBrandingScript(scalarConfig) {
           anime({ targets: '.sponsor-card', translateY: [24, 0], opacity: [0, 1], duration: 500, delay: anime.stagger(120, { start: 250 }), easing: 'easeOutExpo' });
         }, cfg.delayMs);
       }
+      // Localhost/VPS IP/Local Network Admin Save Logic
+      const isIP = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(window.location.hostname);
+      const isLocal = isIP || 
+                      ['localhost', '127.0.0.1'].includes(window.location.hostname) || 
+                      window.location.hostname.endsWith('.local');
+                      
+      if (isLocal) {
+          // Force visibility of Scalar's native Configure button on Desktop IPs only
+          const forceTools = document.createElement('style');
+          forceTools.textContent = \`
+            [id^="headlessui-popover-button-scalar-refs"], 
+            .scalar-developer-tools { 
+              display: flex !important; 
+              visibility: visible !important; 
+            }
+            @media (max-width: 768px) {
+              [id^="headlessui-popover-button-scalar-refs"],
+              .scalar-developer-tools {
+                display: none !important;
+                visibility: hidden !important;
+              }
+            }
+          \`;
+          document.head.appendChild(forceTools);
+
+          var scData = ${JSON.stringify(scalarConfig)};
+          
+          const showMiuuNotification = (msg, isSuccess) => {
+              const toast = document.createElement('div');
+              toast.className = 'miuu-toast';
+              
+              const icon = isSuccess 
+                  ? \`<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>\`
+                  : \`<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>\`;
+              
+              toast.innerHTML = icon + '<span>' + msg + '</span>';
+              document.body.appendChild(toast);
+              
+              anime({
+                  targets: toast,
+                  bottom: [0, 30],
+                  opacity: [0, 1],
+                  duration: 600,
+                  easing: 'easeOutExpo'
+              });
+              
+              setTimeout(() => {
+                  anime({
+                      targets: toast,
+                      opacity: 0,
+                      bottom: 50,
+                      duration: 400,
+                      easing: 'easeInExpo',
+                      complete: () => toast.remove()
+                  });
+              }, 3000);
+          };
+
+          const injectSaveButton = (panel) => {
+              if (panel.querySelector('#miuu-save-btn')) return;
+              
+              const saveBtn = document.createElement('button');
+              saveBtn.id = 'miuu-save-btn';
+              saveBtn.innerHTML = 'Save to scalar.json';
+              saveBtn.className = 'bg-b-3 text-c-1 hover:bg-b-2 flex items-center justify-center rounded px-4 py-2.5 text-xs font-bold uppercase tracking-wider mb-6 w-full border border-c-3 transition-all duration-200 active:scale-95 shadow-sm';
+              
+              saveBtn.onclick = async () => {
+                  saveBtn.disabled = true;
+                  const originalText = saveBtn.innerHTML;
+                  saveBtn.innerHTML = 'SAVING...';
+                  
+                  anime({
+                      targets: saveBtn,
+                      scale: [1, 0.95, 1],
+                      duration: 300,
+                      easing: 'easeInOutQuad'
+                  });
+                  
+                  const jsonEl = panel.querySelector('pre') || panel.querySelector('code');
+                  if (!jsonEl) {
+                      showMiuuNotification('Configuration not found', false);
+                      saveBtn.disabled = false;
+                      saveBtn.innerHTML = originalText;
+                      return;
+                  }
+                  
+                  try {
+                      const configObj = JSON.parse(jsonEl.innerText.trim());
+                      const finalConfig = {
+                          ...configObj,
+                          customBranding: {
+                              ...scData.customBranding,
+                              ...(configObj.customBranding || {})
+                          }
+                      };
+                      
+                      const res = await fetch('/api/admin/config', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(finalConfig)
+                      });
+                      
+                      if (res.ok) {
+                          showMiuuNotification('Configuration saved successfully', true);
+                          anime({
+                              targets: saveBtn,
+                              backgroundColor: ['var(--scalar-background-3)', '#22c55e', 'var(--scalar-background-3)'],
+                              duration: 1000,
+                              easing: 'easeInOutQuad'
+                          });
+                          setTimeout(() => {
+                              saveBtn.disabled = false;
+                              saveBtn.innerHTML = originalText;
+                          }, 1000);
+                      } else {
+                          throw new Error('Server error');
+                      }
+                  } catch (e) {
+                      showMiuuNotification('Failed to save: ' + e.message, false);
+                      saveBtn.disabled = false;
+                      saveBtn.innerHTML = originalText;
+                  }
+              };
+              
+              panel.prepend(saveBtn);
+          };
+
+          const observer = new MutationObserver(() => {
+              const panel = document.querySelector('[id^="headlessui-popover-panel"]');
+              if (panel) injectSaveButton(panel);
+          });
+          
+          observer.observe(document.body, { childList: true, subtree: true });
+      } else {
+          // Hide Scalar's native Configure button on public domains
+          const hideTools = document.createElement('style');
+          hideTools.textContent = \`
+            [id^="headlessui-popover-button-scalar-refs"], 
+            .scalar-developer-tools { 
+              display: none !important; 
+              visibility: hidden !important; 
+            }
+          \`;
+          document.head.appendChild(hideTools);
+      }
+
       customizeUI();
       initSponsorModal();
       var observer = new MutationObserver(customizeUI);

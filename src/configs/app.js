@@ -89,3 +89,15 @@ export const RateLimitSchema = z.object({
         max: z.number()
     })
 })
+
+export const saveScalarConfig = (newConfig) => {
+    try {
+        const __dirname = path.dirname(fileURLToPath(import.meta.url))
+        const configPath = path.join(__dirname, 'scalar.json')
+        fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 2))
+        return true
+    } catch (e) {
+        console.error(`[Config] Error saving scalar.json: ${e.message}`)
+        return false
+    }
+}

@@ -1,13 +1,19 @@
 {
-  "theme": "none",
   "layout": "modern",
+  "theme": "none",
   "hideClientButton": false,
   "showSidebar": true,
-  "showDeveloperTools": false,
+  "showDeveloperTools": true,
   "showToolbar": true,
   "operationTitleSource": "summary",
   "persistAuth": false,
   "telemetry": true,
+  "externalUrls": {
+    "dashboardUrl": "https://dashboard.scalar.com",
+    "registryUrl": "https://registry.scalar.com",
+    "proxyUrl": "https://proxy.scalar.com",
+    "apiBaseUrl": "https://api.scalar.com"
+  },
   "isEditable": false,
   "isLoading": false,
   "hideModels": false,
@@ -23,9 +29,12 @@
   "expandAllResponses": false,
   "orderSchemaPropertiesBy": "alpha",
   "orderRequiredPropertiesFirst": true,
+  "title": "API #1",
+  "slug": "api-1",
   "authentication": {
     "preferredSecurityScheme": "ApiKeyAuth"
   },
+  "default": false,
   "customBranding": {
     "footer": {
       "text": "Powered by miuubyte",

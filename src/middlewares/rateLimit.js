@@ -100,7 +100,7 @@ export const rateLimiter = () => {
         let id = apiKey && keyData ? `key:${apiKey}` : `ip:${ip}`
         const config = keyData ? { max: keyData.limit, windowMs: keyData.windowMs } : { max: guestConfig.limit, windowMs: guestConfig.windowMs }
 
-        if (c.req.path === '/' || c.req.path === '/docs') return await next()
+        if (c.req.path === '/' || c.req.path === '/docs' || c.req.path === '/api/admin/config') return await next()
         if (!c.req.path.startsWith('/api/')) return await next()
 
         if (config.max === 0) {

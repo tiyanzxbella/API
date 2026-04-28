@@ -53,6 +53,29 @@ The portal is strictly optimized for mobile responsiveness:
 - **Anti-Translation Layer**: Prevents Chrome and Android from forcibly translating technical content.
 - **Touch-Friendly Controls**: Large interactive areas and optimized touch-tap highlights.
 - **Compact UI**: Dynamic scaling of font sizes and paddings for small screens.
+- **Admin Isolation**: Configuration tools are intentionally hidden on mobile devices to maintain stability and prevent accidental changes.
+
+---
+
+## Real-Time Portal Configuration
+
+MiuuAPI features a sophisticated, self-service administrative panel that allows for real-time adjustments to the portal's layout, theme, and branding without requiring server restarts.
+
+### Desktop Only Support
+> [!IMPORTANT]
+> **Admin Configuration tools (Configure & Save) are only available on Desktop environments.**
+> These tools are automatically disabled and hidden on mobile devices and public domains to ensure security and prevent UI conflicts.
+
+### How to Use
+1. **Access**: Open the portal via `localhost:4000` or your server's `IP:Port` on a desktop browser.
+2. **Configure**: Click the native **Configure** button provided by the Scalar engine.
+3. **Edit**: Adjust the Layout (Classic/Modern), Theme, or other JSON parameters.
+4. **Save**: Click the professional **SAVE TO SCALAR.JSON** button injected at the top of the configuration panel.
+5. **Sync**: The changes are persisted to `src/configs/scalar.json` instantly and reflected globally.
+
+### Security and Rate Limits
+- **IP Protection**: The configuration panel only appears when accessed via a numeric IP or localhost. It is completely removed from the DOM when accessed via a public domain.
+- **Rate Limit Bypass**: Administrative configuration requests are excluded from global rate limiting, ensuring you can make unlimited adjustments during development or maintenance.
 
 ---
 
