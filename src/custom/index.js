@@ -110,14 +110,9 @@ export function buildBrandingScript() {
   (function() {
     function patchScalar() {
       try {
-        var savedKey = localStorage.getItem('miuu_api_key');
-        if (savedKey) {
-          var auth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
-          if (!auth.authentication) auth.authentication = {};
-          if (!auth.authentication.ApiKeyAuth) {
-            auth.authentication.ApiKeyAuth = savedKey;
-            localStorage.setItem('scalar_authentication', JSON.stringify(auth));
-          }
+        var auth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
+        if (auth && auth.authentication && auth.authentication.ApiKeyAuth) {
+          // Key exists in default storage
         }
       } catch(e) {}
 
@@ -288,16 +283,14 @@ export function buildBrandingScript() {
 
             async function updateRL() {
               try {
-                var apiKey = localStorage.getItem('miuu_api_key') || '';
+                var apiKey = '';
                 
-                if (!apiKey) {
-                  try {
-                    var scalarAuth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
-                    if (scalarAuth && scalarAuth.authentication && scalarAuth.authentication.ApiKeyAuth) {
-                      apiKey = scalarAuth.authentication.ApiKeyAuth;
-                    }
-                  } catch(e) {}
-                }
+                try {
+                  var scalarAuth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
+                  if (scalarAuth && scalarAuth.authentication && scalarAuth.authentication.ApiKeyAuth) {
+                    apiKey = scalarAuth.authentication.ApiKeyAuth;
+                  }
+                } catch(e) {}
                 
                 if (!apiKey) {
                   var inputs = document.querySelectorAll('input');
@@ -307,7 +300,6 @@ export function buildBrandingScript() {
                     if (p.includes('api-key') || p.includes('api key') || p.includes('QUxMIFlPVVIgQkFTRSBBUkUgQkVMT05HIFRPIFVT') || inputs[i].classList.contains('scalar-password-input')) {
                       if (val && val.length > 5) {
                         apiKey = val;
-                        localStorage.setItem('miuu_api_key', apiKey);
                         break;
                       }
                     }
@@ -323,7 +315,6 @@ export function buildBrandingScript() {
                 var res = await window.fetch(url, { method: 'HEAD', headers: headers });
                 
                 if (res.status === 401) {
-                  localStorage.removeItem('miuu_api_key');
                   var auth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
                   if (auth.authentication) delete auth.authentication.ApiKeyAuth;
                   localStorage.setItem('scalar_authentication', JSON.stringify(auth));
