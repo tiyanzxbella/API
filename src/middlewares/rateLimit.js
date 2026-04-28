@@ -1,6 +1,20 @@
 import cluster from 'node:cluster'
+import fs from 'node:fs'
+import path from 'node:path'
 import { getConnInfo } from '@hono/node-server/conninfo'
-import { apiKeys, guestConfig, autoBanList, autoBanConfig, manualBans } from '../configs/apiKeys.js'
+import { apiKeys, guestConfig, autoBanConfig } from '../configs/apiKeys.js'
+
+const bansPath = path.resolve('src/configs/bans.json')
+let autoBanList = []
+let manualBans = []
+
+try {
+    if (fs.existsSync(bansPath)) {
+        const data = JSON.parse(fs.readFileSync(bansPath, 'utf8'))
+        autoBanList = data.autoBanList || []
+        manualBans = data.manualBans || []
+    }
+} catch (e) {}
 
 const clients = new Map()
 const ipMonitor = new Map()
@@ -8,8 +22,8 @@ const ipMonitor = new Map()
 if (cluster.isWorker) {
     process.on('message', (msg) => {
         if (msg.type === 'BAN_LIST_SYNC') {
-            autoBanList.length = 0
-            autoBanList.push(...msg.data)
+            autoBanList = msg.data.autoBanList || []
+            manualBans = msg.data.manualBans || []
         }
     })
 }

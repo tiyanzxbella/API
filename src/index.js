@@ -56,25 +56,38 @@ if (isCluster && cluster.isPrimary) {
     logger.info(`Starting ${numCPUs} workers...`)
 
     const masterClients = new Map()
-    const masterAutoBanList = []
+    const bansPath = path.resolve('src/configs/bans.json')
+    let banData = { autoBanList: [], manualBans: [] }
+    try {
+        if (fs.existsSync(bansPath)) {
+            banData = JSON.parse(fs.readFileSync(bansPath, 'utf8'))
+        }
+    } catch (e) {
+        logger.error(`Failed to load bans.json: ${e.message}`)
+    }
 
-    const syncAutoBanListToFile = () => {
+    const masterAutoBanList = banData.autoBanList || []
+    const masterManualBans = banData.manualBans || []
+
+    const syncBansToFile = () => {
         try {
-            const filePath = path.resolve('src/configs/apiKeys.js')
-            let content = fs.readFileSync(filePath, 'utf8')
-            const listString = JSON.stringify(masterAutoBanList, null, 4)
-            content = content.replace(/export const autoBanList = \[([\s\S]*?)\]/, `export const autoBanList = ${listString}`)
-            fs.writeFileSync(filePath, content, 'utf8')
+            fs.writeFileSync(bansPath, JSON.stringify({
+                autoBanList: masterAutoBanList,
+                manualBans: masterManualBans
+            }, null, 4), 'utf8')
         } catch (e) {
-            logger.error(`Failed to sync autoBanList to file: ${e.message}`)
+            logger.error(`Failed to sync bans to file: ${e.message}`)
         }
     }
 
     const broadcastBanList = () => {
         Object.values(cluster.workers).forEach(w => {
-            if (w) w.send({ type: 'BAN_LIST_SYNC', data: masterAutoBanList })
+            if (w) w.send({ 
+                type: 'BAN_LIST_SYNC', 
+                data: { autoBanList: masterAutoBanList, manualBans: masterManualBans } 
+            })
         })
-        syncAutoBanListToFile()
+        syncBansToFile()
     }
 
     for (let i = 0; i < numCPUs; i++) {

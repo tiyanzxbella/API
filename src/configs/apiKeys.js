@@ -18,12 +18,3 @@ export const autoBanConfig = {
     windowMs: 10 * 60 * 1000,
     banDuration: 30 * 60 * 1000
 }
-
-export const autoBanList = []
-
-export const manualBans = [
-    {
-        ip: '',
-        reason: ''
-    }
-]

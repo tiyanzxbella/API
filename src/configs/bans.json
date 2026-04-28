@@ -1,0 +1,9 @@
+{
+    "autoBanList": [],
+    "manualBans": [
+        {
+            "ip": "",
+            "reason": ""
+        }
+    ]
+}
