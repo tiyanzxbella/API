@@ -3,7 +3,6 @@ import { getConnInfo } from '@hono/node-server/conninfo'
 import { apiKeys, guestConfig, banList, autoBanConfig } from '../configs/apiKeys.js'
 
 const clients = new Map()
-const ipMonitor = new Map() // For auto-ban tracking
 
 const syncRateLimit = (data) => {
     return new Promise((resolve) => {
@@ -56,30 +55,6 @@ export const rateLimiter = () => {
             }
         }
 
-        // 2. Auto-ban monitoring (anti-DDoS)
-        if (autoBanConfig.enabled && !c.req.path.includes('/docs')) {
-            let monitor = ipMonitor.get(ip)
-            if (!monitor || now > monitor.resetTime) {
-                ipMonitor.set(ip, { count: 1, resetTime: now + autoBanConfig.windowMs })
-            } else {
-                monitor.count++
-                if (monitor.count > autoBanConfig.threshold) {
-                    // AUTO BAN!
-                    banList.push({ 
-                        ip, 
-                        reason: 'Auto-ban: DDoS Protection (Exceeded 2000 req/5min)', 
-                        expires: now + autoBanConfig.banDuration 
-                    })
-                    return c.json({
-                        success: false,
-                        status: 403,
-                        error: 'Forbidden',
-                        message: 'Your IP has been automatically banned for 5 minutes due to excessive requests (DDoS protection).'
-                    }, 403)
-                }
-            }
-        }
-
         const apiKey = headers['x-api-key'] || c.req.query('apikey') || c.req.query('apiKey');
         const keyData = apiKeys.find(k => k.key === apiKey)
 
@@ -95,9 +70,7 @@ export const rateLimiter = () => {
             return await next()
         }
 
-        const now = Date.now()
         let clientData
-
         if (cluster.isWorker) {
             clientData = await syncRateLimit({ id, method: c.req.method, windowMs: config.windowMs })
         } else {
@@ -112,6 +85,22 @@ export const rateLimiter = () => {
                 }
             }
             clientData = clients.get(id)
+        }
+
+        // 2. Auto-ban monitoring (anti-DDoS)
+        if (autoBanConfig.enabled && clientData.count > autoBanConfig.threshold) {
+            // AUTO BAN!
+            banList.push({ 
+                ip, 
+                reason: `Auto-ban: DDoS Protection (Exceeded ${autoBanConfig.threshold} req)`, 
+                expires: now + autoBanConfig.banDuration 
+            })
+            return c.json({
+                success: false,
+                status: 403,
+                error: 'Forbidden',
+                message: `Your IP has been automatically banned for 5 minutes due to excessive requests (DDoS protection).`
+            }, 403)
         }
 
         const remaining = Math.max(0, config.max - clientData.count)
