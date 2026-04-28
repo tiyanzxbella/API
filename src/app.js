@@ -95,6 +95,9 @@ app.get('/', (c) => {
     c.header('Pragma', 'no-cache')
     c.header('Expires', '0')
     c.header('Content-Language', 'en')
+    c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    c.header('Pragma', 'no-cache')
+    c.header('Expires', '0')
     return c.html(html)
 })
 

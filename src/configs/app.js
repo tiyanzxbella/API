@@ -26,8 +26,9 @@ export const getScalarConfig = () => {
         const configPath = path.join(__dirname, 'scalar.json')
         if (fs.existsSync(configPath)) {
             const data = fs.readFileSync(configPath, 'utf8')
-            console.log(`[Config] Loaded scalar.json from ${configPath}`)
-            return JSON.parse(data)
+            const config = JSON.parse(data)
+            console.log(`[Config] Loaded scalar.json (Layout: ${config.layout}, Theme: ${config.theme})`)
+            return config
         } else {
             console.warn(`[Config] scalar.json not found at ${configPath}`)
         }
