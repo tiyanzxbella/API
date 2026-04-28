@@ -40,8 +40,8 @@ export const adsConfig = {
     title: 'Sponsored Partners',
     sponsors: [
         {
-            name: 'Miuu Cloud',
-            type: 'Hosting Provider',
+            name: 'miuubyte',
+            type: 'Core Developer',
             logoUrl: '/favicon.png',
             bannerUrl: '/assets/banner.jpg',
             targetUrl: 'https://github.com/miuubyte',
