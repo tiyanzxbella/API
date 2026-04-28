@@ -26,10 +26,12 @@ export const logApiRequest = async (c, next) => {
         `${Color.bold(method)} ${statusColor(status)} ${Color.gray(path)} ${Color.dim(duration + 'ms')} ${Color.dim('[' + apiKey + ']')}`
     )
 
-    // File Log
-    fileLogger.write('info', `${method} ${status} ${path}`, {
-        ip: ip || 'unknown',
-        apiKey,
-        duration: duration + 'ms'
-    })
+    // File Log - ONLY if NOT HEAD request
+    if (method !== 'HEAD') {
+        fileLogger.write('info', `${method} ${status} ${path}`, {
+            ip: ip || 'unknown',
+            apiKey,
+            duration: duration + 'ms'
+        })
+    }
 }
