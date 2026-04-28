@@ -1,8 +1,9 @@
 import cluster from 'node:cluster'
 import { getConnInfo } from '@hono/node-server/conninfo'
-import { apiKeys, guestConfig, banList } from '../configs/apiKeys.js'
+import { apiKeys, guestConfig, banList, autoBanConfig } from '../configs/apiKeys.js'
 
 const clients = new Map()
+const ipMonitor = new Map() // For auto-ban tracking
 
 const syncRateLimit = (data) => {
     return new Promise((resolve) => {
@@ -36,14 +37,47 @@ export const rateLimiter = () => {
         if (ip === '::1') ip = '127.0.0.1'
         if (ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '')
 
-        if (banList.some(b => b === ip || b.ip === ip)) {
-            const banInfo = typeof banList[0] === 'object' ? banList.find(b => b.ip === ip) : null;
-            return c.json({
-                success: false,
-                status: 403,
-                error: 'Forbidden',
-                message: banInfo?.reason ? `Your IP has been banned from accessing this API. Reason: ${banInfo.reason}` : 'Your IP has been banned from accessing this API.'
-            }, 403)
+        const now = Date.now()
+
+        // 1. Check existing bans
+        const existingBanIndex = banList.findIndex(b => b === ip || b.ip === ip)
+        if (existingBanIndex !== -1) {
+            const ban = banList[existingBanIndex]
+            if (typeof ban === 'object' && ban.expires && now > ban.expires) {
+                // Ban expired, remove it
+                banList.splice(existingBanIndex, 1)
+            } else {
+                return c.json({
+                    success: false,
+                    status: 403,
+                    error: 'Forbidden',
+                    message: ban.reason ? `Your IP has been banned. Reason: ${ban.reason}` : 'Your IP has been banned due to unusual activity.'
+                }, 403)
+            }
+        }
+
+        // 2. Auto-ban monitoring (anti-DDoS)
+        if (autoBanConfig.enabled && !c.req.path.includes('/docs')) {
+            let monitor = ipMonitor.get(ip)
+            if (!monitor || now > monitor.resetTime) {
+                ipMonitor.set(ip, { count: 1, resetTime: now + autoBanConfig.windowMs })
+            } else {
+                monitor.count++
+                if (monitor.count > autoBanConfig.threshold) {
+                    // AUTO BAN!
+                    banList.push({ 
+                        ip, 
+                        reason: 'Auto-ban: DDoS Protection (Exceeded 2000 req/5min)', 
+                        expires: now + autoBanConfig.banDuration 
+                    })
+                    return c.json({
+                        success: false,
+                        status: 403,
+                        error: 'Forbidden',
+                        message: 'Your IP has been automatically banned for 5 minutes due to excessive requests (DDoS protection).'
+                    }, 403)
+                }
+            }
         }
 
         const apiKey = headers['x-api-key'] || c.req.query('apikey') || c.req.query('apiKey');
