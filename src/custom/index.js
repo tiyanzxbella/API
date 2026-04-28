@@ -215,16 +215,24 @@ export function buildBrandingScript() {
 
           async function updateRL() {
             try {
-              // Try to find the API key in common locations
               var apiKey = localStorage.getItem('miuu_api_key') || '';
               
-              // Also try to peek into Scalar's potential storage if possible
               if (!apiKey) {
                 for (var i = 0; i < localStorage.length; i++){
                   var k = localStorage.key(i);
-                  if (k.includes('scalar') || k.includes('api-reference')) {
-                    var val = localStorage.getItem(k);
-                    if (val.includes('a8d9f1c2b3e4a5c6')) apiKey = 'a8d9f1c2b3e4a5c6';
+                  if (k.startsWith('scalar_')) {
+                    try {
+                      var val = JSON.parse(localStorage.getItem(k));
+                      if (val && val.authentication && val.authentication.securitySchemeValues) {
+                        var schemes = val.authentication.securitySchemeValues;
+                        for (var s in schemes) {
+                          if (schemes[s].value) {
+                            apiKey = schemes[s].value;
+                            break;
+                          }
+                        }
+                      }
+                    } catch(e) {}
                   }
                 }
               }
@@ -244,25 +252,23 @@ export function buildBrandingScript() {
               var limitEl = document.getElementById('m-rl-limit');
               var dot = document.getElementById('rl-dot');
 
-              if (remaining !== null && limit !== null && valEl && limitEl) {
-                 if (limit === 'UNLIMITED' || limit === 'Unlimited' || parseInt(limit) === 0) {
-                    valEl.innerText = '∞';
-                    limitEl.innerText = '∞';
-                    if (dot) dot.className = 'cl-btn-dot up';
-                 } else {
-                    valEl.innerText = remaining;
-                    limitEl.innerText = limit;
-                    var remainingNum = parseInt(remaining, 10);
-                    var limitNum = parseInt(limit, 10);
-                    if (dot && !isNaN(remainingNum) && !isNaN(limitNum)) {
-                       var percentage = (remainingNum / limitNum) * 100;
-                       dot.className = 'cl-btn-dot ' + (percentage > 30 ? 'up' : (percentage > 0 ? 'warn' : 'down'));
-                    }
-                 }
+              if (valEl && limitEl) {
+                if (limit === 'UNLIMITED' || limit === 'Unlimited' || limit === '0') {
+                  valEl.innerText = '∞';
+                  limitEl.innerText = '∞';
+                  if (dot) dot.className = 'cl-btn-dot up';
+                } else if (remaining !== null && limit !== null) {
+                  valEl.innerText = remaining;
+                  limitEl.innerText = limit;
+                  var remainingNum = parseInt(remaining, 10);
+                  var limitNum = parseInt(limit, 10);
+                  if (dot && !isNaN(remainingNum) && !isNaN(limitNum)) {
+                    var percentage = (remainingNum / limitNum) * 100;
+                    dot.className = 'cl-btn-dot ' + (percentage > 30 ? 'up' : (percentage > 0 ? 'warn' : 'down'));
+                  }
+                }
               }
-            } catch(e) {
-               console.error('RL Widget Error:', e);
-            }
+            } catch(e) {}
           }
           setInterval(updateRL, 3000);
           updateRL();
