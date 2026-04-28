@@ -8,6 +8,8 @@ import { secureHeaders } from 'hono/secure-headers'
 import { serveStatic } from '@hono/node-server/serve-static'
 import cluster from 'node:cluster'
 import os from 'node:os'
+import fs from 'node:fs'
+import path from 'node:path'
 
 import logger from './utils/logger.js'
 import { appConfig, openApiConfig, scalarConfig } from './configs/app.js'
@@ -132,8 +134,19 @@ if (isCluster && cluster.isPrimary) {
     app.use('*', prettyPrint)
     app.use('*', rateLimiter())
     app.use('/assets/*', serveStatic({ root: './src/public' }))
-    app.use('/favicon.ico', serveStatic({ path: './src/public/favicon.ico' }))
-    app.get('/favicon.ico', serveStatic({ path: './src/public/favicon.ico' }))
+    
+    app.get('/favicon.ico', (c) => {
+        try {
+            const iconPath = path.resolve('src/public/favicon.ico')
+            if (fs.existsSync(iconPath)) {
+                const icon = fs.readFileSync(iconPath)
+                c.header('Content-Type', 'image/x-icon')
+                c.header('Cache-Control', 'public, max-age=3600')
+                return c.body(icon)
+            }
+        } catch (e) {}
+        return c.notFound()
+    })
 
     setupRoutes(app)
 
