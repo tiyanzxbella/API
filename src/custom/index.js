@@ -218,34 +218,42 @@ export function buildBrandingScript() {
               var apiKey = localStorage.getItem('miuu_api_key') || '';
               
               if (!apiKey) {
-                // More aggressive search for Scalar storage
-                Object.keys(localStorage).forEach(function(k) {
-                  if (k.indexOf('scalar') !== -1) {
-                    try {
-                      var data = localStorage.getItem(k);
-                      if (data.indexOf('a8d9f1c2b3e4a5c6') !== -1) apiKey = 'a8d9f1c2b3e4a5c6';
-                      else {
-                        // Look for any 16-char hex-like string which might be a key
-                        var match = data.match(/[a-f0-9]{16}/);
-                        if (match) apiKey = match[0];
-                      }
-                    } catch(e) {}
-                  }
+                // Universal scan of ALL storage
+                var allStorage = { ...localStorage, ...sessionStorage };
+                Object.keys(allStorage).forEach(function(k) {
+                  try {
+                    var data = allStorage[k];
+                    if (typeof data !== 'string') return;
+                    if (data.indexOf('a8d9f1c2b3e4a5c6') !== -1) {
+                      apiKey = 'a8d9f1c2b3e4a5c6';
+                    } else if (!apiKey) {
+                      var match = data.match(/[a-f0-9]{16}/);
+                      if (match) apiKey = match[0];
+                    }
+                  } catch(e) {}
                 });
               }
 
+              // Direct DOM peek for the Authorize input
+              if (!apiKey) {
+                var inputs = document.querySelectorAll('input');
+                for (var i = 0; i < inputs.length; i++) {
+                  var v = inputs[i].value || '';
+                  if (v.length === 16 && /[a-f0-9]{16}/.test(v)) {
+                    apiKey = v;
+                    break;
+                  }
+                }
+              }
+
               var url = '/api/auth/check?t=' + Date.now();
-              var headers = {};
+              var headers = { 'Accept': 'application/json' };
               if (apiKey) {
                 headers['x-api-key'] = apiKey;
                 url += '&apikey=' + apiKey;
               }
 
-              var res = await window.fetch(url, { 
-                method: 'HEAD',
-                headers: headers
-              });
-              
+              var res = await window.fetch(url, { method: 'HEAD', headers: headers });
               var remaining = res.headers.get('x-ratelimit-remaining');
               var limit = res.headers.get('x-ratelimit-limit');
               
@@ -269,10 +277,7 @@ export function buildBrandingScript() {
                   }
                 }
               }
-              console.log('RL Sync:', { key: apiKey ? 'Detected' : 'Guest', remaining, limit });
-            } catch(e) {
-              console.error('RL Error:', e);
-            }
+            } catch(e) {}
           }
           setInterval(updateRL, 3000);
           updateRL();
