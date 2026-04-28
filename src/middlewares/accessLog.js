@@ -21,14 +21,19 @@ export const logApiRequest = async (c, next) => {
     const method = c.req.method
     const path = c.req.path
 
+    // Determine category
+    const isApi = path.startsWith('/api/')
+    const category = isApi ? 'ENDPOINT' : 'WEB'
+    const categoryColor = isApi ? Color.cyan : Color.magenta
+
     // Console Log
     logger.info(
-        `${Color.bold(method)} ${statusColor(status)} ${Color.gray(path)} ${Color.dim(duration + 'ms')} ${Color.dim('[' + apiKey + ']')}`
+        `${categoryColor('[' + category + ']')} ${Color.bold(method)} ${statusColor(status)} ${Color.gray(path)} ${Color.dim(duration + 'ms')} ${Color.dim('[' + apiKey + ']')}`
     )
 
     // File Log - ONLY if NOT HEAD request
     if (method !== 'HEAD') {
-        fileLogger.write('info', `${method} ${status} ${path}`, {
+        fileLogger.write('info', `${category} | ${method} ${status} ${path}`, {
             ip: ip || 'unknown',
             apiKey,
             duration: duration + 'ms'
