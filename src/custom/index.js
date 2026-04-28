@@ -110,10 +110,7 @@ export function buildBrandingScript() {
   (function() {
     function patchScalar() {
       try {
-        var auth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
-        if (auth && auth.authentication && auth.authentication.ApiKeyAuth) {
-          // Key exists in default storage
-        }
+        localStorage.removeItem('scalar_authentication');
       } catch(e) {}
 
       var styleEl = document.createElement('style');
@@ -285,23 +282,14 @@ export function buildBrandingScript() {
               try {
                 var apiKey = '';
                 
-                try {
-                  var scalarAuth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
-                  if (scalarAuth && scalarAuth.authentication && scalarAuth.authentication.ApiKeyAuth) {
-                    apiKey = scalarAuth.authentication.ApiKeyAuth;
-                  }
-                } catch(e) {}
-                
-                if (!apiKey) {
-                  var inputs = document.querySelectorAll('input');
-                  for(var i=0; i<inputs.length; i++) {
-                    var p = inputs[i].placeholder || '';
-                    var val = inputs[i].value || '';
-                    if (p.includes('api-key') || p.includes('api key') || p.includes('QUxMIFlPVVIgQkFTRSBBUkUgQkVMT05HIFRPIFVT') || inputs[i].classList.contains('scalar-password-input')) {
-                      if (val && val.length > 5) {
-                        apiKey = val;
-                        break;
-                      }
+                var inputs = document.querySelectorAll('input');
+                for(var i=0; i<inputs.length; i++) {
+                  var p = inputs[i].placeholder || '';
+                  var val = inputs[i].value || '';
+                  if (p.includes('api-key') || p.includes('api key') || p.includes('QUxMIFlPVVIgQkFTRSBBUkUgQkVMT05HIFRPIFVT') || inputs[i].classList.contains('scalar-password-input')) {
+                    if (val && val.length > 5) {
+                      apiKey = val;
+                      break;
                     }
                   }
                 }
@@ -315,17 +303,7 @@ export function buildBrandingScript() {
                 var res = await window.fetch(url, { method: 'HEAD', headers: headers });
                 
                 if (res.status === 401) {
-                  var auth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
-                  if (auth.authentication) delete auth.authentication.ApiKeyAuth;
-                  localStorage.setItem('scalar_authentication', JSON.stringify(auth));
                   apiKey = '';
-                } else if (apiKey) {
-                  var auth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
-                  if (!auth.authentication) auth.authentication = {};
-                  if (auth.authentication.ApiKeyAuth !== apiKey) {
-                    auth.authentication.ApiKeyAuth = apiKey;
-                    localStorage.setItem('scalar_authentication', JSON.stringify(auth));
-                  }
                 }
 
                 var remaining = res.headers.get('x-ratelimit-remaining');
