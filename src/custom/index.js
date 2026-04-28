@@ -215,7 +215,15 @@ export function buildBrandingScript() {
 
           async function updateRL() {
             try {
-              var res = await window.fetch('/api/auth/check?t=' + Date.now(), { method: 'HEAD' });
+              var apiKey = localStorage.getItem('miuu_api_key') || '';
+              var headers = { 'Method': 'HEAD' };
+              if (apiKey) headers['x-api-key'] = apiKey;
+
+              var res = await window.fetch('/api/auth/check?t=' + Date.now(), { 
+                method: 'HEAD',
+                headers: headers
+              });
+              
               var dot = document.getElementById('rl-dot');
               var remaining = res.headers.get('x-ratelimit-remaining');
               var limit = res.headers.get('x-ratelimit-limit');
@@ -226,8 +234,10 @@ export function buildBrandingScript() {
                  var remainingNum = parseInt(remaining, 10);
                  var limitNum = parseInt(limit, 10);
                  if (dot) {
-                   if (isNaN(remainingNum) || isNaN(limitNum)) {
+                   if (isNaN(remainingNum) || isNaN(limitNum) || limit === 'UNLIMITED') {
                        dot.className = 'cl-btn-dot up'; // Unlimited
+                       document.getElementById('m-rl-val').innerText = '∞';
+                       document.getElementById('m-rl-limit').innerText = '∞';
                    } else {
                        var percentage = (remainingNum / limitNum) * 100;
                        dot.className = 'cl-btn-dot ' + (percentage > 30 ? 'up' : (percentage > 0 ? 'warn' : 'down'));
