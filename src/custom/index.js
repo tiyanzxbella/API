@@ -41,7 +41,21 @@ export function buildBrandingScript() {
     }
     .m-rl-widget:hover { transform: scale(1.05); }
     .m-rl-label { color: var(--scalar-color-3); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .m-rl-val { color: var(--scalar-color-accent); }
+    .m-rl-val { 
+      color: var(--scalar-color-accent); 
+      font-family: 'Inter', sans-serif;
+      font-feature-settings: 'tnum' on, 'lnum' on;
+      text-shadow: 0 0 8px color-mix(in srgb, var(--scalar-color-accent) 40%, transparent);
+    }
+    .m-rl-val.unlimited {
+      font-size: 18px;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--scalar-color-accent), #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 4px color-mix(in srgb, var(--scalar-color-accent) 50%, transparent));
+      font-weight: 800;
+    }
   `;
   const combinedCSS = preloaderCSS + bannerCSS + adsCSS + statusCSS;
   const { footer, clientButton } = scalarConfig.customBranding;
@@ -262,7 +276,7 @@ export function buildBrandingScript() {
 
               if (container) {
                 if (limit === 'UNLIMITED' || limit === 'Unlimited' || limit === '0') {
-                  container.innerHTML = '<span id="m-rl-val">∞</span>';
+                  container.innerHTML = '<span id="m-rl-val" class="m-rl-val unlimited">∞</span>';
                   if (dot) dot.className = 'cl-btn-dot up';
                 } else if (remaining !== null && limit !== null) {
                   if (!document.getElementById('m-rl-limit')) {
