@@ -109,6 +109,18 @@ export function buildBrandingScript() {
 <script type="text/javascript">
   (function() {
     function patchScalar() {
+      try {
+        var savedKey = localStorage.getItem('miuu_api_key');
+        if (savedKey) {
+          var auth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
+          if (!auth.authentication) auth.authentication = {};
+          if (!auth.authentication.ApiKeyAuth) {
+            auth.authentication.ApiKeyAuth = savedKey;
+            localStorage.setItem('scalar_authentication', JSON.stringify(auth));
+          }
+        }
+      } catch(e) {}
+
       var styleEl = document.createElement('style');
       styleEl.textContent = ${JSON.stringify(combinedCSS)} + ' .scalar-mcp-layer, .scalar-mcp-layer-link, [class*="scalar-mcp"], .mcp-logo, .mcp-nav, .ask-agent-scalar-input-label, [data-v-78f5377c] { display: none !important; visibility: hidden !important; pointer-events: none !important; height: 0 !important; width: 0 !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important; position: absolute !important; } .m-discord-btn svg { width: 16px; height: 16px; margin-right: 6px; fill: currentColor; vertical-align: middle; }';
       document.head.appendChild(styleEl);
@@ -309,6 +321,22 @@ export function buildBrandingScript() {
                 }
 
                 var res = await window.fetch(url, { method: 'HEAD', headers: headers });
+                
+                if (res.status === 401) {
+                  localStorage.removeItem('miuu_api_key');
+                  var auth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
+                  if (auth.authentication) delete auth.authentication.ApiKeyAuth;
+                  localStorage.setItem('scalar_authentication', JSON.stringify(auth));
+                  apiKey = '';
+                } else if (apiKey) {
+                  var auth = JSON.parse(localStorage.getItem('scalar_authentication') || '{}');
+                  if (!auth.authentication) auth.authentication = {};
+                  if (auth.authentication.ApiKeyAuth !== apiKey) {
+                    auth.authentication.ApiKeyAuth = apiKey;
+                    localStorage.setItem('scalar_authentication', JSON.stringify(auth));
+                  }
+                }
+
                 var remaining = res.headers.get('x-ratelimit-remaining');
                 var limit = res.headers.get('x-ratelimit-limit');
                 
