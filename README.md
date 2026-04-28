@@ -15,7 +15,13 @@ Native implementation of the Node.js Cluster module allows for seamless multi-co
 A highly customized Scalar integration featuring a glassmorphism design system. Includes a theme-aware preloader and hardware-accelerated transitions that automatically adapt to system-level light and dark mode preferences.
 
 ### Security and Rate Management
-Robust security layer providing mandatory header validation, CORS policy enforcement, and a tiered rate-limiting system. Supports high-throughput access via secure API Key authentication.
+Robust security layer providing mandatory header validation, CORS policy enforcement, and a tiered rate-limiting system. Includes real-time quota tracking (`X-RateLimit-Remaining`) and optimized background monitoring that bypasses quota depletion.
+
+### Real-time Infrastructure Logging
+Sophisticated logging engine that captures and categorizes server interactions into `WEB` (portal access) and `ENDPOINT` (API usage). Automatically filters out background monitoring noise and saves clean, readable logs to daily rotated files.
+
+### Global Mobile Optimization
+The documentation portal is specifically engineered for mobile performance, featuring native-level responsiveness and multi-layer protection against forced browser auto-translation (specifically for Chrome on Android).
 
 ---
 
@@ -139,7 +145,7 @@ System-level diagnostics and real-time health metrics.
 | Endpoint | Method | Description |
 | :--- | :---: | :--- |
 | `/api/stats` | `GET` | Detailed hardware metrics (CPU, RAM, Uptime, Network). |
-| `/api/auth/check` | `GET` | Authentication token validation and tier status. |
+| `/api/auth/check` | `GET` | Real-time token validation, tier status, and remaining quota. |
 
 ---
 
@@ -160,13 +166,12 @@ All responses follow a consistent, predictable JSON schema.
 ```json
 {
   "success": true,
-  "status": 200,
-  "data": {
-    "title": "Example Media",
-    "slug": "example-media",
-    "status": "Ongoing",
-    "episodes": 12
-  }
+  "key": "your_api_key",
+  "type": "Premium",
+  "limit": 5000,
+  "remaining": 4982,
+  "description": "High performance API access",
+  "owner": "Miuu Support"
 }
 ```
 
