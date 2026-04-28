@@ -23,7 +23,7 @@ export const autoBanList = []
 
 export const manualBans = [
     {
-        ip: '127.0.0.1',
-        reason: 'Manual Ban: Terms of Service Violation'
+        ip: '',
+        reason: ''
     }
 ]
