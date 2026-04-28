@@ -264,9 +264,37 @@ export function buildBrandingScript() {
             var rlWidget = document.createElement('div');
             rlWidget.id = 'm-rl-widget';
             rlWidget.className = 'm-rl-widget';
-            rlWidget.innerHTML = '<div class="cl-btn-dot checking" id="rl-dot"></div><span class="m-rl-label">Rate Limit</span><div class="m-rl-val-box" id="m-rl-val-container"><span id="m-rl-val" class="m-rl-val">--</span><span class="m-rl-sep">/</span><span id="m-rl-limit" class="m-rl-val">--</span></div>';
+            rlWidget.innerHTML = '<div class="cl-btn-dot checking" id="rl-dot"></div>' +
+              '<span class="m-rl-label">Rate Limit</span>' +
+              '<div class="m-rl-val-box" id="m-rl-val-container">' +
+                '<span id="m-rl-val" class="m-rl-val">--</span>' +
+                '<span class="m-rl-sep">/</span>' +
+                '<span id="m-rl-limit" class="m-rl-val">--</span>' +
+              '</div>' +
+              '<button id="m-rl-key-btn" style="background:none;border:none;color:var(--scalar-color-3);cursor:pointer;padding:4px;display:flex;align-items:center;transition:color 0.3s;" title="Set API Key">' +
+                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3L15.5 7.5z"></path></svg>' +
+              '</button>';
             document.body.appendChild(rlWidget);
 
+            var keyBtn = document.getElementById('m-rl-key-btn');
+            keyBtn.onclick = function() {
+              var current = localStorage.getItem('miuu_api_key') || '';
+              var key = prompt('Enter your API Key:', current);
+              if (key !== null) {
+                localStorage.setItem('miuu_api_key', key.trim());
+                updateRL();
+              }
+            };
+            
+            // Auto-detect key from Scalar UI
+            document.addEventListener('input', function(e) {
+              if (e.target.tagName === 'INPUT' && (e.target.name === 'x-api-key' || e.target.placeholder.includes('x-api-key'))) {
+                localStorage.setItem('miuu_api_key', e.target.value.trim());
+                updateRL();
+              }
+            });
+
+            var lastRemaining = null;
             async function updateRL() {
               try {
                 var apiKey = localStorage.getItem('miuu_api_key') || '';
@@ -285,15 +313,38 @@ export function buildBrandingScript() {
                 var dot = document.getElementById('rl-dot');
 
                 if (container && remaining !== null && limit !== null) {
-                  if (limit === 'UNLIMITED' || limit === 'Unlimited' || limit === '0') {
-                    container.innerHTML = '<span id="m-rl-val" class="m-rl-val unlimited">∞</span>';
-                    container.classList.add('unlimited-box');
-                    if (dot) dot.className = 'cl-btn-dot up';
+                  if (limit.toUpperCase() === 'UNLIMITED' || limit === '0') {
+                    if (!container.classList.contains('unlimited-box')) {
+                      container.innerHTML = '<span id="m-rl-val" class="m-rl-val unlimited">∞</span>';
+                      container.classList.add('unlimited-box');
+                      if (dot) dot.className = 'cl-btn-dot up';
+                      anime({
+                        targets: container,
+                        scale: [0.9, 1],
+                        opacity: [0, 1],
+                        duration: 800,
+                        easing: 'easeOutElastic(1, 0.5)'
+                      });
+                    }
                   } else {
-                    container.classList.remove('unlimited-box');
+                    if (container.classList.contains('unlimited-box')) {
+                      container.classList.remove('unlimited-box');
+                      container.innerHTML = '<span id="m-rl-val" class="m-rl-val">--</span><span class="m-rl-sep">/</span><span id="m-rl-limit" class="m-rl-val">--</span>';
+                    }
+                    
                     var curValEl = document.getElementById('m-rl-val');
                     var curLimitEl = document.getElementById('m-rl-limit');
-                    if (curValEl) curValEl.innerText = remaining;
+                    
+                    if (curValEl && curValEl.innerText !== remaining) {
+                      curValEl.innerText = remaining;
+                      anime({
+                        targets: curValEl,
+                        translateY: [-10, 0],
+                        opacity: [0, 1],
+                        duration: 400,
+                        easing: 'easeOutBack'
+                      });
+                    }
                     if (curLimitEl) curLimitEl.innerText = limit;
                     
                     var remainingNum = parseInt(remaining, 10);
@@ -306,7 +357,7 @@ export function buildBrandingScript() {
                 }
               } catch(e) {}
             }
-            setInterval(updateRL, 5000);
+            setInterval(updateRL, 10000); // Check every 10s to be less aggressive
             updateRL();
           }
         } finally {
