@@ -10,7 +10,7 @@
     "description": "High-performance API gateway and documentation portal for MiuuAPI. Optimized for Node.js 20+ with automatic git cloning and clustering support.",
     "features": null,
     "docker_images": {
-        "Node.js 20": "ghcr.io/pterodactyl/yolks:nodejs_20"
+        "Miuu All-in-One": "ghcr.io/miuubyte/nodejs-all-in-one"
     },
     "file_denylist": [],
     "startup": "if [ ! -d \"node_modules\" ]; then npm install; fi; node src/index.js",
