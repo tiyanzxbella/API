@@ -4,6 +4,16 @@ MiuuAPI is a high-performance, production-ready API gateway and documentation po
 
 ---
 
+## Preview
+
+### Desktop Version
+![Desktop Preview](src/public/preview/desktop-preview.png)
+
+### Mobile Version
+![Mobile Preview](src/public/preview/mobile-preview.png)
+
+---
+
 ## Key Features
 
 ### Advanced Security and DDoS Protection
