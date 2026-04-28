@@ -58,18 +58,19 @@ export function buildBrandingScript() {
     
     .m-rl-val { 
       color: #3db3ff; 
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 700;
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
-      text-shadow: 0 0 12px rgba(61, 179, 255, 0.4);
+      text-shadow: 0 0 15px rgba(61, 179, 255, 0.5);
     }
     
     .m-rl-sep {
-      color: #ffffff;
-      font-size: 12px;
-      margin: 0 4px;
-      opacity: 0.4;
-      font-weight: 300;
+      color: #3db3ff;
+      font-size: 16px;
+      margin: 0 8px;
+      opacity: 0.8;
+      font-weight: 200;
+      text-shadow: 0 0 8px rgba(61, 179, 255, 0.3);
     }
     
     .m-rl-val.unlimited {
