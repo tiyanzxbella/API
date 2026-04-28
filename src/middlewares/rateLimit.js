@@ -1,6 +1,6 @@
 import cluster from 'node:cluster'
 import { getConnInfo } from '@hono/node-server/conninfo'
-import { apiKeys, guestConfig, banList, autoBanConfig, manualBans } from '../configs/apiKeys.js'
+import { apiKeys, guestConfig, autoBanList, autoBanConfig, manualBans } from '../configs/apiKeys.js'
 
 const clients = new Map()
 const ipMonitor = new Map()
@@ -8,8 +8,8 @@ const ipMonitor = new Map()
 if (cluster.isWorker) {
     process.on('message', (msg) => {
         if (msg.type === 'BAN_LIST_SYNC') {
-            banList.length = 0
-            banList.push(...msg.data)
+            autoBanList.length = 0
+            autoBanList.push(...msg.data)
         }
     })
 }
@@ -54,15 +54,15 @@ export const rateLimiter = () => {
                 success: false,
                 status: 403,
                 error: 'Forbidden',
-                message: manualBan.reason || 'IP anda telah diblokir secara manual oleh administrator.'
+                message: manualBan.reason || 'Your IP has been manually blocked by the administrator.'
             }, 403)
         }
 
-        const existingBanIndex = banList.findIndex(b => b.ip === ip)
+        const existingBanIndex = autoBanList.findIndex(b => b.ip === ip)
         if (existingBanIndex !== -1) {
-            const ban = banList[existingBanIndex]
+            const ban = autoBanList[existingBanIndex]
             if (ban.expires && now > ban.expires) {
-                banList.splice(existingBanIndex, 1)
+                autoBanList.splice(existingBanIndex, 1)
             } else {
                 return c.json({
                     success: false,
@@ -88,7 +88,7 @@ export const rateLimiter = () => {
                     if (cluster.isWorker) {
                         process.send({ type: 'BAN_IP', data: banData })
                     } else {
-                        banList.push(banData)
+                        autoBanList.push(banData)
                     }
                     return c.json({
                         success: false,

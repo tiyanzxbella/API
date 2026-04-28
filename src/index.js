@@ -54,11 +54,11 @@ if (isCluster && cluster.isPrimary) {
     logger.info(`Starting ${numCPUs} workers...`)
 
     const masterClients = new Map()
-    const masterBanList = []
+    const masterAutoBanList = []
 
     const broadcastBanList = () => {
         Object.values(cluster.workers).forEach(w => {
-            if (w) w.send({ type: 'BAN_LIST_SYNC', data: masterBanList })
+            if (w) w.send({ type: 'BAN_LIST_SYNC', data: masterAutoBanList })
         })
     }
 
@@ -94,8 +94,8 @@ if (isCluster && cluster.isPrimary) {
                 })
             } else if (msg.type === 'BAN_IP') {
                 const { ip, reason, expires } = msg.data
-                if (!masterBanList.find(b => b.ip === ip)) {
-                    masterBanList.push({ ip, reason, expires })
+                if (!masterAutoBanList.find(b => b.ip === ip)) {
+                    masterAutoBanList.push({ ip, reason, expires })
                     broadcastBanList()
                 }
             }
@@ -107,9 +107,9 @@ if (isCluster && cluster.isPrimary) {
         for (const [id, data] of masterClients.entries()) {
             if (now > data.resetTime) masterClients.delete(id)
         }
-        for (let i = masterBanList.length - 1; i >= 0; i--) {
-            if (now > masterBanList[i].expires) {
-                masterBanList.splice(i, 1)
+        for (let i = masterAutoBanList.length - 1; i >= 0; i--) {
+            if (now > masterAutoBanList[i].expires) {
+                masterAutoBanList.splice(i, 1)
                 broadcastBanList()
             }
         }
