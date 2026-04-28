@@ -1,6 +1,6 @@
 import cluster from 'node:cluster'
 import { getConnInfo } from '@hono/node-server/conninfo'
-import { apiKeys, guestConfig, banList, autoBanConfig } from '../configs/apiKeys.js'
+import { apiKeys, guestConfig, banList, autoBanConfig, manualBans } from '../configs/apiKeys.js'
 
 const clients = new Map()
 const ipMonitor = new Map()
@@ -48,17 +48,27 @@ export const rateLimiter = () => {
 
         const now = Date.now()
 
-        const existingBanIndex = banList.findIndex(b => b === ip || b.ip === ip)
+        const manualBan = manualBans.find(b => b.ip === ip)
+        if (manualBan) {
+            return c.json({
+                success: false,
+                status: 403,
+                error: 'Forbidden',
+                message: manualBan.reason || 'IP anda telah diblokir secara manual oleh administrator.'
+            }, 403)
+        }
+
+        const existingBanIndex = banList.findIndex(b => b.ip === ip)
         if (existingBanIndex !== -1) {
             const ban = banList[existingBanIndex]
-            if (typeof ban === 'object' && ban.expires && now > ban.expires) {
+            if (ban.expires && now > ban.expires) {
                 banList.splice(existingBanIndex, 1)
             } else {
                 return c.json({
                     success: false,
                     status: 403,
                     error: 'Forbidden',
-                    message: ban.reason || 'Akses ditolak.'
+                    message: ban.reason || 'IP anda diblokir otomatis.'
                 }, 403)
             }
         }

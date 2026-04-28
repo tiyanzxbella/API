@@ -19,4 +19,11 @@ export const autoBanConfig = {
   banDuration: 30 * 60 * 1000
 }
 
+export const manualBans = [
+  {
+    ip: '192.168.1.1',
+    reason: 'Manual Ban: Pelanggaran Ketentuan Layanan'
+  }
+]
+
 export const banList = []
