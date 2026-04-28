@@ -95,6 +95,7 @@ export const rateLimiter = () => {
             return await next()
         }
 
+        const now = Date.now()
         let clientData
 
         if (cluster.isWorker) {
