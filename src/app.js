@@ -90,7 +90,7 @@ app.get('/', (c) => {
     
     html = html.replace('</head>', `${faviconTags}</head>`)
     html = html.replace('<body>', '<body class="notranslate">')
-    html = html.replace('</body>', `${buildBrandingScript()}</body>`)
+    html = html.replace('</body>', `${buildBrandingScript(scalarConfig)}</body>`)
     c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
     c.header('Pragma', 'no-cache')
     c.header('Expires', '0')
