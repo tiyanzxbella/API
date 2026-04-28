@@ -36,7 +36,7 @@ const fileLogger = {
 
         const line = `[${timestamp}] [${level.toUpperCase()}] ${cleanMessage} ${Object.keys(metadata).length ? JSON.stringify(metadata) : ''}\n`
         
-        fs.appendFile(logFile, line, (err) => {
+        fs.appendFile(logFile, line, { encoding: 'utf8' }, (err) => {
             if (err) console.error('Failed to write to log file:', err)
         })
     },
