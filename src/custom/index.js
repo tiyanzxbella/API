@@ -257,23 +257,22 @@ export function buildBrandingScript() {
               var remaining = res.headers.get('x-ratelimit-remaining');
               var limit = res.headers.get('x-ratelimit-limit');
               
-              var valEl = document.getElementById('m-rl-val');
-              var limitEl = document.getElementById('m-rl-limit');
+              var container = document.getElementById('m-rl-val-container');
               var dot = document.getElementById('rl-dot');
 
-              if (valEl && limitEl) {
-                var container = document.getElementById('m-rl-val-container');
+              if (container) {
                 if (limit === 'UNLIMITED' || limit === 'Unlimited' || limit === '0') {
-                  if (container) container.innerHTML = '<span id="m-rl-val">∞</span>';
+                  container.innerHTML = '<span id="m-rl-val">∞</span>';
                   if (dot) dot.className = 'cl-btn-dot up';
                 } else if (remaining !== null && limit !== null) {
-                  if (container && !document.getElementById('m-rl-limit')) {
+                  if (!document.getElementById('m-rl-limit')) {
                     container.innerHTML = '<span id="m-rl-val">--</span>/<span id="m-rl-limit">--</span>';
-                    valEl = document.getElementById('m-rl-val');
-                    limitEl = document.getElementById('m-rl-limit');
                   }
-                  valEl.innerText = remaining;
-                  limitEl.innerText = limit;
+                  var curValEl = document.getElementById('m-rl-val');
+                  var curLimitEl = document.getElementById('m-rl-limit');
+                  if (curValEl) curValEl.innerText = remaining;
+                  if (curLimitEl) curLimitEl.innerText = limit;
+                  
                   var remainingNum = parseInt(remaining, 10);
                   var limitNum = parseInt(limit, 10);
                   if (dot && !isNaN(remainingNum) && !isNaN(limitNum)) {
