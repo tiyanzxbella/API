@@ -16,7 +16,7 @@ export const adsConfig = {
     /**
      * The title displayed at the top of the modal
      */
-    title: 'Sponsored Partners',
+    title: 'Featured Partner',
 
     /**
      * List of sponsors to be displayed
@@ -30,20 +30,11 @@ export const adsConfig = {
      */
     sponsors: [
         {
-            name: 'miuubyte',
-            type: 'Core Developer',
-            logoUrl: '/favicon.png',
-            bannerUrl: '/assets/banner.jpg',
-            targetUrl: 'https://github.com/miuubyte',
-            bgColor: '#000000',
-            textColor: '#ffffff'
-        },
-        {
-            name: 'MiuuAPI Community',
-            type: 'Official Sponsor',
-            logoUrl: '/favicon.png',
-            bannerUrl: '/assets/banner.jpg',
-            targetUrl: 'https://github.com/miuubyte/API',
+            name: 'MiuuAPI Discord',
+            type: 'Community Partner',
+            logoUrl: '/assets/discord-logo.svg',
+            bannerUrl: '/assets/discord-banner.svg',
+            targetUrl: 'https://discord.gg/miuubyte',
             bgColor: '#000000',
             textColor: '#ffffff'
         }
@@ -52,5 +43,5 @@ export const adsConfig = {
     /**
      * Text displayed at the bottom of the modal
      */
-    footerText: 'Support our amazing infrastructure partners ❤'
+    footerText: 'Join our community for support and updates ❤'
 };
