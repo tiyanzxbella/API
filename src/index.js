@@ -133,6 +133,7 @@ if (isCluster && cluster.isPrimary) {
     app.use('*', rateLimiter())
     app.use('/assets/*', serveStatic({ root: './src/public' }))
     app.use('/favicon.ico', serveStatic({ path: './src/public/favicon.ico' }))
+    app.get('/favicon.ico', serveStatic({ path: './src/public/favicon.ico' }))
 
     setupRoutes(app)
 
@@ -166,7 +167,7 @@ if (isCluster && cluster.isPrimary) {
         })
         html = html.replace(/(<html)([^>]*)>/, '$1 lang="en" translate="no"$2>')
         html = html.replace('<head>', '<head><meta name="google" content="notranslate"><meta http-equiv="Content-Language" content="en"><meta name="language" content="English">')
-        html = html.replace('</head>', '<link rel="icon" type="image/x-icon" href="/favicon.ico"></head>')
+        html = html.replace('</head>', '<link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"></head>')
         html = html.replace('<body>', '<body class="notranslate">')
         html = html.replace('</body>', `${buildBrandingScript()}</body>`)
         c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')

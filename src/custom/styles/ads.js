@@ -41,6 +41,7 @@ export const adsCSS = `
     padding: 16px 20px;
     background: var(--scalar-background-2);
     border-bottom: 1px solid var(--scalar-border-color);
+    flex-shrink: 0;
   }
 
   .sponsor-modal-title {
@@ -78,6 +79,7 @@ export const adsCSS = `
     display: flex;
     flex-direction: column;
     gap: 20px;
+    overflow-y: auto;
   }
 
   .sponsor-card {
@@ -117,6 +119,7 @@ export const adsCSS = `
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
     transition: transform 0.4s ease;
+    flex-shrink: 0;
   }
 
   .sponsor-card:hover .sponsor-logo {
@@ -127,6 +130,7 @@ export const adsCSS = `
     width: 80%;
     height: 80%;
     object-fit: contain;
+    filter: brightness(0) invert(1);
   }
 
   .sponsor-info {
@@ -153,7 +157,8 @@ export const adsCSS = `
   }
 
   .sponsor-card-body {
-    height: 200px;
+    width: 100%;
+    aspect-ratio: 1200 / 400;
     overflow: hidden;
     background: #000;
     position: relative;
@@ -162,14 +167,15 @@ export const adsCSS = `
   .sponsor-banner-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    display: block;
+    object-fit: contain;
     opacity: 0.8;
     transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .sponsor-card:hover .sponsor-banner-image {
     opacity: 1;
-    transform: scale(1.08);
+    transform: scale(1.02);
   }
 
   .sponsor-modal-footer {
@@ -177,6 +183,7 @@ export const adsCSS = `
     text-align: center;
     background: var(--scalar-background-2);
     border-top: 1px solid var(--scalar-border-color);
+    flex-shrink: 0;
   }
 
   .sponsor-support-text {
@@ -187,7 +194,6 @@ export const adsCSS = `
     letter-spacing: 0.1em;
   }
 
-  /* AnimeJS-style shine effect */
   .sponsor-card::after {
     content: '';
     position: absolute;
@@ -203,5 +209,18 @@ export const adsCSS = `
 
   .sponsor-card:hover::after {
     left: 150%;
+  }
+
+  @media (max-width: 480px) {
+    .sponsor-modal {
+      max-height: 85vh;
+    }
+    .sponsor-logo {
+      width: 36px;
+      height: 36px;
+    }
+    .sponsor-name {
+      font-size: 13px;
+    }
   }
 `;
