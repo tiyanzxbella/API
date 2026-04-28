@@ -430,11 +430,11 @@ export function buildBrandingScript(scalarConfig) {
           anime({ targets: '.sponsor-modal', scale: [0.85, 1], translateY: [40, 0], opacity: [0, 1], duration: 700, easing: 'easeOutElastic(1, 0.7)' });
           anime({ targets: '.sponsor-card', translateY: [24, 0], opacity: [0, 1], duration: 500, delay: anime.stagger(120, { start: 250 }), easing: 'easeOutExpo' });
         }, cfg.delayMs);
-      }      customizeUI();
+      }
+      customizeUI();
       initSponsorModal();
       var observer = new MutationObserver(customizeUI);
       observer.observe(document.body, { childList: true, subtree: true });
-    }
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', patchScalar);
