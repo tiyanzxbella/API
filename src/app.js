@@ -65,7 +65,7 @@ app.get('/docs', (c) => {
 })
 
 app.get('/', (c) => {
-    const { branding, ...config } = scalarConfig
+    const { customBranding, ...config } = scalarConfig
     let html = renderApiReference({
         config: { ...config, spec: { url: '/docs' } },
         pageTitle: `${appConfig.title} - Documentation Portal`
