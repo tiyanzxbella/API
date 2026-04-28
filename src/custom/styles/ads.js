@@ -1,16 +1,13 @@
 export const adsCSS = `
-  /* ── Sponsor Ads Modal ── */
-
-  /* Overlay / Backdrop */
   .sponsor-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     z-index: 100000;
     display: flex;
     align-items: center;
@@ -19,180 +16,159 @@ export const adsCSS = `
     pointer-events: none;
   }
 
-  /* Modal Container */
   .sponsor-modal {
     width: 90%;
-    max-width: 620px;
-    max-height: 85vh;
+    max-width: 580px;
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+    font-family: 'Inter', system-ui, sans-serif;
+    opacity: 0;
+    transform: scale(0.9) translateY(40px);
     display: flex;
     flex-direction: column;
-    background: var(--scalar-background-1);
-    border: 1px solid var(--scalar-border-color);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.6);
-    font-family: var(--scalar-font);
-    opacity: 0;
-    transform: scale(0.85) translateY(40px);
   }
 
-  /* Header */
   .sponsor-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 22px;
-    border-bottom: 1px solid var(--scalar-border-color);
-    flex-shrink: 0;
-  }
-  .sponsor-modal-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--scalar-color-1);
-    margin: 0;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    padding: 20px 24px;
+    background: #111;
+    border-bottom: 1px solid #222;
   }
 
-  /* Close Button */
+  .sponsor-modal-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: #fff;
+    margin: 0;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
   .sponsor-close-btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: #666;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    padding: 6px;
-    border-radius: 8px;
-    border: 1px solid var(--scalar-border-color);
-    background: var(--scalar-background-2);
-    color: var(--scalar-color-3);
     cursor: pointer;
-    transition: background 0.2s, color 0.2s, transform 0.15s;
-  }
-  .sponsor-close-btn:hover {
-    background: var(--scalar-background-3, #333);
-    color: var(--scalar-color-1);
-    transform: scale(1.1);
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  /* Scrollable Body */
+  .sponsor-close-btn:hover {
+    border-color: #fff;
+    color: #fff;
+    transform: rotate(90deg);
+  }
+
   .sponsor-modal-body {
-    padding: 20px;
+    padding: 24px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    flex: 1;
+    gap: 20px;
   }
 
-  /* Sponsor Card */
   .sponsor-card {
-    border-radius: 12px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 4px;
     overflow: hidden;
     cursor: pointer;
-    border: 1px solid var(--scalar-border-color);
-    opacity: 0;
-    transform: translateY(24px);
-    transition: box-shadow 0.25s ease, border-color 0.25s ease;
-  }
-  .sponsor-card:hover {
-    box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.35);
-    border-color: var(--scalar-color-accent);
-  }
-  .sponsor-card:hover .sponsor-banner-image {
-    transform: scale(1.02);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
   }
 
-  /* Card Header (Logo + Info) */
+  .sponsor-card:hover {
+    border-color: var(--scalar-color-accent);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+
   .sponsor-card-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 13px 16px;
-    background: var(--scalar-background-2);
-    border-bottom: 1px solid var(--scalar-border-color);
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #222;
+    background: #161616;
   }
+
   .sponsor-logo {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
-    border: 2px solid var(--scalar-border-color);
-    flex-shrink: 0;
   }
+
   .sponsor-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
   }
+
   .sponsor-info {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-  }
-  .sponsor-name {
-    font-size: 14px;
-    font-weight: 700;
-    margin: 0;
-    color: var(--scalar-color-1);
-  }
-  .sponsor-type {
-    display: inline-block;
-    font-size: 9px;
-    font-weight: 800;
-    color: var(--scalar-color-accent);
-    border: 1px solid var(--scalar-color-accent);
-    padding: 2px 8px;
-    border-radius: 4px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    background: color-mix(in srgb, var(--scalar-color-accent) 8%, transparent);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--scalar-color-accent) 25%, transparent);
-    position: relative;
-    overflow: hidden;
-  }
-  .sponsor-type::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    animation: sponsor-shimmer 3s infinite;
-  }
-  @keyframes sponsor-shimmer {
-    0% { left: -100%; }
-    20%, 100% { left: 100%; }
+    gap: 4px;
   }
 
-  /* Card Body (Banner Image) */
-  .sponsor-card-body {
-    padding: 0;
-    overflow: hidden;
+  .sponsor-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+    letter-spacing: 0.05em;
   }
+
+  .sponsor-type {
+    font-size: 9px;
+    font-weight: 900;
+    color: var(--scalar-color-accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
   .sponsor-banner-image {
     width: 100%;
-    display: block;
+    height: 180px;
     object-fit: cover;
-    /* Banner recommended: 1200x400px or 3:1 ratio */
-    max-height: 210px;
-    transition: transform 0.4s ease;
+    filter: grayscale(0.5);
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  /* Footer */
-  .sponsor-modal-footer {
-    padding: 13px 22px;
-    text-align: center;
-    border-top: 1px solid var(--scalar-border-color);
-    background: var(--scalar-background-2);
-    flex-shrink: 0;
+  .sponsor-card:hover .sponsor-banner-image {
+    filter: grayscale(0);
+    transform: scale(1.05);
   }
+
+  .sponsor-modal-footer {
+    padding: 20px;
+    text-align: center;
+    background: #080808;
+    border-top: 1px solid #111;
+  }
+
   .sponsor-support-text {
-    font-size: 12px;
-    color: var(--scalar-color-3);
-    margin: 0;
-    letter-spacing: 0.01em;
+    font-size: 11px;
+    color: #444;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
   }
 `;
