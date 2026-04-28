@@ -21,17 +21,21 @@ export const appConfig = {
  * Configuration for the Scalar Documentation UI
  * Loaded dynamically from scalar.json
  */
-let loadedScalarConfig = {}
-try {
-    const configPath = path.join(__dirname, 'scalar.json')
-    if (fs.existsSync(configPath)) {
-        loadedScalarConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+export const getScalarConfig = () => {
+    try {
+        const configPath = path.join(__dirname, 'scalar.json')
+        if (fs.existsSync(configPath)) {
+            return JSON.parse(fs.readFileSync(configPath, 'utf8'))
+        }
+    } catch (e) {
+        console.error('[Config] Failed to load scalar.json')
     }
-} catch (e) {
-    console.error('[Config] Failed to load scalar.json, using defaults')
+    return {
+        theme: 'none',
+        layout: 'modern',
+        authentication: { preferredSecurityScheme: 'ApiKeyAuth' }
+    }
 }
-
-export const scalarConfig = loadedScalarConfig
 
 export const openApiConfig = {
     openapi: '3.1.0',

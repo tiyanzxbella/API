@@ -7,7 +7,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import logger from './utils/logger.js'
-import { appConfig, openApiConfig, scalarConfig } from './configs/app.js'
+import { appConfig, openApiConfig, getScalarConfig } from './configs/app.js'
 import { setupRoutes } from './routes/index.js'
 import { logApiRequest } from './middlewares/accessLog.js'
 import { rateLimiter } from './middlewares/rateLimit.js'
@@ -65,6 +65,7 @@ app.get('/docs', (c) => {
 })
 
 app.get('/', (c) => {
+    const scalarConfig = getScalarConfig()
     const { customBranding, ...config } = scalarConfig
     let html = renderApiReference({
         config: { ...config, spec: { url: '/docs' } },
